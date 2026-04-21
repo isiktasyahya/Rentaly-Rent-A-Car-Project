@@ -1,0 +1,380 @@
+﻿@{
+    var branches = ViewBag.Branches as List<Rentaly.EntityLayer.Entities.Branch>;
+    var categories = ViewBag.Categories as List<Rentaly.EntityLayer.Entities.Category>;
+    var brands = ViewBag.Brands as List<Rentaly.EntityLayer.Entities.Brand>;
+
+    var curBranch = ViewBag.CurrentBranchId?.ToString() ?? "";
+    var curCategory = ViewBag.CurrentCategoryId?.ToString() ?? "";
+    var curBrand = ViewBag.CurrentBrandId?.ToString() ?? "";
+    var curMin = ViewBag.CurrentMinPrice?.ToString() ?? "0";
+    var curMax = ViewBag.CurrentMaxPrice?.ToString() ?? "10000";
+    var curPickup = ViewBag.CurrentPickupDate?.ToString() ?? "";
+    var curReturn = ViewBag.CurrentReturnDate?.ToString() ?? "";
+}
+
+<div class="col-lg-3">
+    <form method="get" asp-controller="Default" asp-action="CarList" id="carFilterForm">
+
+        <!-- ══ ŞUBE ══ -->
+        <div class="item_filter_group">
+            <h4>Şube</h4>
+            <select name="branchId" class="form-control form-custom">
+                <option value="">Tüm Şubeler</option>
+                @if (branches != null)
+                {
+                    foreach (var b in branches)
+                    {
+                        <option value="@b.BranchId"
+                                selected="@(curBranch == b.BranchId.ToString())">
+                            @b.BranchName
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- ══ ARAÇ TİPİ ══ -->
+        <div class="item_filter_group">
+            <h4>Araç Tipi</h4>
+            <div class="de_form" id="categoryRadioGroup">
+
+                <div class="de_checkbox">
+                    <input type="radio" id="cat_all" name="categoryId" value="" />
+                    <label for="cat_all">Tümü</label>
+                </div>
+
+                @if (categories != null)
+                {
+                    foreach (var cat in categories)
+                    {
+                        <div class="de_checkbox">
+                            <input type="radio"
+                                   id="cat_@cat.CategoryId"
+                                   name="categoryId"
+                                   value="@cat.CategoryId" />
+                            <label for="cat_@cat.CategoryId">@cat.CategoryName</label>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+
+        <!-- ══ MARKA ══ -->
+        <div class="item_filter_group">
+            <h4>Marka</h4>
+            <select name="brandId" class="form-control form-custom">
+                <option value="">Tüm Markalar</option>
+                @if (brands != null)
+                {
+                    foreach (var br in brands)
+                    {
+                        <option value="@br.BrandId"
+                                selected="@(curBrand == br.BrandId.ToString())">
+                            @br.BrandName
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- ══ ALİŞ TARİHİ ══ -->
+        <div class="item_filter_group">
+            <h4>Alış Tarihi</h4>
+            <input type="date"
+                   name="pickupDate"
+                   class="form-control form-custom"
+                   value="@curPickup"
+                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <!-- ══ DÖNÜŞ TARİHİ ══ -->
+        <div class="item_filter_group">
+            <h4>Dönüş Tarihi</h4>
+            <input type="date"
+                   name="returnDate"
+                   class="form-control form-custom"
+                   value="@curReturn"
+                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+        </div>
+
+        <!-- ══ FİYAT ARALIĞI ══ -->
+        <div class="item_filter_group">
+            <h4>Fiyat Aralığı (₺)</h4>
+            <div class="price-input">
+                <div class="field">
+                    <span>Min</span>
+                    <input type="number"
+                           name="minPrice"
+                           class="input-min"
+                           value="@curMin"
+                           min="0" max="10000" step="100" />
+                </div>
+                <div class="field">
+                    <span>Max</span>
+                    <input type="number"
+                           name="maxPrice"
+                           class="input-max"
+                           value="@curMax"
+                           min="0" max="10000" step="100" />
+                </div>
+            </div>
+            <div class="slider">
+                <div class="progress" id="priceProgress"></div>
+            </div>
+            <div class="range-input">
+                <input type="range" class="range-min" id="rangeMin"
+                       min="0" max="10000" value="@curMin" step="100" />
+                <input type="range" class="range-max" id="rangeMax"
+                       min="0" max="10000" value="@curMax" step="100" />
+            </div>
+        </div>
+
+        <!-- ══ BUTON ══ -->
+        <div class="item_filter_group mt-4">
+            <button type="submit" class="btn-main w-100">
+                Araçları Listele
+            </button>
+        </div>
+
+        <!-- ══ SIFIRLA ══ -->
+        <div class="item_filter_group mt-2 text-center">
+            <a href="@Url.Action("CarList", "Default")"
+               style="font-size:13px;color:#6b7280;text-decoration:none;
+                      display:flex;align-items:center;justify-content:center;gap:5px;">
+                ↺ Filtreleri Sıfırla
+            </a>
+        </div>
+
+    </form>
+</div>
+
+<style>
+    .form-custom {
+        height: 50px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: 1px solid #e5e7eb;
+        transition: border-color .2s;
+    }
+
+        .form-custom:focus {
+            border-color: #1ecb15;
+            box-shadow: 0 0 0 3px rgba(30,203,21,.12);
+            outline: none;
+        }
+
+    .de_checkbox {
+        margin-bottom: 10px;
+    }
+
+        .de_checkbox label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+    .price-input {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+        .price-input .field {
+            width: 100%;
+        }
+
+            .price-input .field span {
+                font-size: 12px;
+                color: #6b7280;
+                display: block;
+                margin-bottom: 4px;
+                font-weight: 600;
+            }
+
+        .price-input input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0 10px;
+            font-weight: 700;
+            color: #1a1a2e;
+            font-size: 14px;
+        }
+
+            .price-input input:focus {
+                outline: none;
+                border-color: #1ecb15;
+            }
+
+    .slider {
+        height: 5px;
+        position: relative;
+        background: #e5e7eb;
+        border-radius: 5px;
+        margin: 15px 0;
+    }
+
+        .slider .progress {
+            height: 5px;
+            position: absolute;
+            border-radius: 5px;
+            background: #1ecb15;
+        }
+
+    .range-input {
+        position: relative;
+        height: 5px;
+    }
+
+        .range-input input {
+            position: absolute;
+            top: -5px;
+            height: 5px;
+            width: 100%;
+            background: none;
+            pointer-events: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+            .range-input input::-webkit-slider-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                pointer-events: auto;
+                appearance: none;
+                -webkit-appearance: none;
+                background: #1ecb15;
+                cursor: pointer;
+                border: 3px solid #fff;
+                box-shadow: 0 2px 8px rgba(30,203,21,.30);
+            }
+    /* Temanın kendi radio butonunu gizle */
+    .de_form .de_checkbox input[type="radio"] + label::before,
+    .de_form .de_checkbox input[type="radio"] + label::after {
+        display: none !important;
+    }
+
+    /* Bizim radio butonunu göster */
+    .de_form .de_checkbox {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-bottom: 12px !important;
+        padding: 8px 12px !important;
+        border-radius: 10px !important;
+        border: 1.5px solid #e5e7eb !important;
+        cursor: pointer !important;
+        transition: all 0.2s !important;
+        background: #fff !important;
+    }
+
+        .de_form .de_checkbox:hover {
+            border-color: #1ecb15 !important;
+            background: #f0fdf4 !important;
+        }
+
+        .de_form .de_checkbox:has(input:checked) {
+            border-color: #1ecb15 !important;
+            background: #f0fdf4 !important;
+        }
+
+        .de_form .de_checkbox label {
+            cursor: pointer !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            font-size: 14px !important;
+            color: #374151 !important;
+            flex: 1 !important;
+        }
+
+        .de_form .de_checkbox:has(input:checked) label {
+            color: #15803d !important;
+            font-weight: 700 !important;
+        }
+
+        /* Bizim native radio butonu */
+        .de_form .de_checkbox input[type="radio"] {
+            width: 18px !important;
+            height: 18px !important;
+            accent-color: #1ecb15 !important;
+            cursor: pointer !important;
+            flex-shrink: 0 !important;
+        }
+</style>
+
+<script>
+    // Tema JS yüklendikten SONRA çalışsın diye window.onload kullan
+    window.addEventListener('load', function () {
+
+        // ── Radio buton fix ──
+        const params = new URLSearchParams(window.location.search);
+        const catValue = params.get('categoryId') || '';
+        const radios = document.querySelectorAll('input[name="categoryId"]');
+
+        radios.forEach(function (r) {
+            // Tema stilini sıfırla
+            r.style.cssText = 'position:relative !important; opacity:1 !important; width:18px !important; height:18px !important; margin-right:8px !important; cursor:pointer !important; pointer-events:auto !important; appearance:auto !important; -webkit-appearance:auto !important; display:inline-block !important;';
+            r.style.accentColor = '#1ecb15';
+            // Doğru olanı seç
+            r.checked = (r.value === catValue);
+        });
+
+        // ── Fiyat Slider ──
+        const rangeMin = document.getElementById('rangeMin');
+        const rangeMax = document.getElementById('rangeMax');
+        const inputMin = document.querySelector('.input-min');
+        const inputMax = document.querySelector('.input-max');
+        const progress = document.getElementById('priceProgress');
+        const GAP = 500;
+        const MAX = 10000;
+
+        function updateProgress() {
+            const lo = parseInt(rangeMin.value);
+            const hi = parseInt(rangeMax.value);
+            progress.style.left = (lo / MAX * 100) + '%';
+            progress.style.right = (100 - hi / MAX * 100) + '%';
+        }
+
+        updateProgress();
+
+        rangeMin.addEventListener('input', function () {
+            if (parseInt(rangeMax.value) - parseInt(this.value) < GAP)
+                this.value = parseInt(rangeMax.value) - GAP;
+            inputMin.value = this.value;
+            updateProgress();
+        });
+
+        rangeMax.addEventListener('input', function () {
+            if (parseInt(this.value) - parseInt(rangeMin.value) < GAP)
+                this.value = parseInt(rangeMin.value) + GAP;
+            inputMax.value = this.value;
+            updateProgress();
+        });
+
+        inputMin.addEventListener('input', function () {
+            rangeMin.value = this.value;
+            updateProgress();
+        });
+
+        inputMax.addEventListener('input', function () {
+            rangeMax.value = this.value;
+            updateProgress();
+        });
+
+        // ── Tarih validasyon ──
+        const pickup = document.querySelector('input[name="pickupDate"]');
+        const ret = document.querySelector('input[name="returnDate"]');
+        if (pickup && ret) {
+            pickup.addEventListener('change', function () {
+                ret.min = this.value;
+                if (ret.value && ret.value <= this.value) {
+                    const d = new Date(this.value);
+                    d.setDate(d.getDate() + 1);
+                    ret.value = d.toISOString().split('T')[0];
+                }
+            });
+        }
+    });
+</script>

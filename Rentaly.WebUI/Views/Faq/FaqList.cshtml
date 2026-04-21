@@ -1,0 +1,837 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Faq>
+@{
+    ViewData["Title"] = "FaqList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+
+@section Styles {
+    <style>
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Stats */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .s-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .s-card.indigo::before {
+                background: var(--accent);
+            }
+
+            .s-card.emerald::before {
+                background: var(--emerald);
+            }
+
+            .s-card.amber::before {
+                background: var(--amber);
+            }
+
+            .s-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .s-card:hover::before {
+                    opacity: 1;
+                }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .s-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .s-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .sw {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+            .sw i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .s-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .s-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .s-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: 1.5px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            transition: all var(--t-s);
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--accent-lighter);
+                border-color: #c7d2fe;
+                color: var(--accent);
+            }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-add:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        /* ══ FAQ ACCORDION LIST ══ */
+        .faq-list-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all var(--t);
+        }
+
+            .faq-item:hover {
+                border-color: #c7d2fe;
+                box-shadow: var(--card-shadow-hover);
+            }
+
+            .faq-item.open {
+                border-color: var(--accent);
+                box-shadow: 0 4px 20px rgba(79,70,229,0.10);
+            }
+
+        .faq-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: background var(--t-s);
+            position: relative;
+        }
+
+            .faq-header:hover {
+                background: var(--accent-lighter);
+            }
+
+        .faq-item.open .faq-header {
+            background: linear-gradient(135deg,var(--accent-lighter) 0%,var(--card-bg) 70%);
+        }
+
+        /* Soru numarası */
+        .faq-num {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-lighter);
+            color: var(--accent);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 800;
+            flex-shrink: 0;
+            transition: all var(--t-s);
+        }
+
+        .faq-item.open .faq-num {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+        }
+
+        .faq-question {
+            flex: 1;
+            min-width: 0;
+            font-family: var(--font-display);
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .faq-item.open .faq-question {
+            color: var(--accent-text);
+        }
+
+        .faq-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .faq-id-badge {
+            background: var(--page-bg);
+            color: var(--text-muted);
+            border: 1.5px solid var(--card-border);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-family: var(--font-display);
+        }
+
+        .faq-toggle-ico {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background: var(--page-bg);
+            border: 1.5px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            transition: all var(--t-s);
+        }
+
+        .faq-item.open .faq-toggle-ico {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            transform: rotate(180deg);
+        }
+
+        /* Cevap alanı */
+        .faq-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity var(--t);
+            opacity: 0;
+        }
+
+        .faq-item.open .faq-body {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .faq-body-inner {
+            padding: 0 18px 18px 68px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 16px;
+            margin-top: 0;
+        }
+
+        .faq-answer {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        .faq-word-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            background: var(--page-bg);
+            border: 1px solid var(--card-border);
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        /* Aksiyonlar */
+        .faq-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* Empty */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        /* Delete Modal */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+            background: #fafbff;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .faq-item {
+            animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+            .faq-item:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+
+            .faq-item:nth-child(2) {
+                animation-delay: 0.10s;
+            }
+
+            .faq-item:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+
+            .faq-item:nth-child(4) {
+                animation-delay: 0.20s;
+            }
+
+            .faq-item:nth-child(5) {
+                animation-delay: 0.25s;
+            }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Sıkça Sorulan Sorular</h1>
+        <p class="page-desc">Ana sayfada gösterilen SSS içeriklerini yönetin.</p>
+    </div>
+    <a href="/Faq/CreateFaq" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Yeni Soru Ekle
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="stat-row">
+    <div class="s-card indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-circle-question"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Soru</div>
+        </div>
+    </div>
+    <div class="s-card emerald">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-eye"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;" id="statVisible">@Model.Count()</div>
+            <div class="s-lbl">Gösterilen</div>
+        </div>
+    </div>
+    <div class="s-card amber">
+        <div class="s-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-align-left"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#d97706;font-size:18px;">
+                @(Model.Any() ? Model.Average(f => (f.Description ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Length).ToString("F0") + " K" : "0")
+            </div>
+            <div class="s-lbl">Ort. Cevap Uzunluğu</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="sw">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="faqSearch"
+               placeholder="Soru veya cevap ara…"
+               oninput="filterFaqs()" />
+    </div>
+    <button class="btn-reset" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+    <button class="btn-reset" onclick="toggleAll(true)" style="color:var(--accent);border-color:#c7d2fe;background:var(--accent-lighter);">
+        <i class="fa-solid fa-chevron-down"></i> Tümünü Aç
+    </button>
+    <button class="btn-reset" onclick="toggleAll(false)">
+        <i class="fa-solid fa-chevron-up"></i> Tümünü Kapat
+    </button>
+</div>
+
+<!-- FAQ Accordion -->
+<div class="faq-list-wrap" id="faqListWrap">
+    @{ int faqIdx = 1; }
+    @foreach (var f in Model)
+    {
+        var wordCount = (f.Description ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+
+        <div class="faq-item"
+             data-id="@f.FaqId"
+             data-title="@f.Title?.ToLower()"
+             data-desc="@f.Description?.ToLower()">
+
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <div class="faq-num">@faqIdx</div>
+                <div class="faq-question">@f.Title</div>
+                <div class="faq-meta">
+                    <span class="faq-id-badge"># @f.FaqId</span>
+                    <div class="faq-toggle-ico">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-body">
+                <div class="faq-body-inner">
+                    <div class="faq-answer">@f.Description</div>
+                    <div>
+                        <span class="faq-word-count">
+                            <i class="fa-solid fa-font" style="font-size:10px;color:var(--accent);"></i>
+                            @wordCount kelime
+                        </span>
+                    </div>
+                    <div class="faq-actions">
+                        <a href="/Faq/UpdateFaq/@f.FaqId" class="tbl-btn tbl-btn-edit">
+                            <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                        </a>
+                        <button class="tbl-btn tbl-btn-delete"
+                                onclick="openDeleteModal(@f.FaqId, '@f.Title?.Replace("'","\\'")')">
+                            <i class="fa-solid fa-trash-can"></i> Sil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        faqIdx++;
+    }
+</div>
+
+<!-- Empty -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-circle-question"></i></div>
+    <div class="empty-title">Soru Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Arama kriterinizle eşleşen soru yok.</p>
+    <button class="btn-add" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Soruyu Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:22px;">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteFaqTitle">bu soruyu</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">Bu işlem geri alınamaz. Ana sayfa etkilenebilir.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteFaqId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    function toggleFaq(header) {
+        const item = header.closest('.faq-item');
+        item.classList.toggle('open');
+    }
+
+    function toggleAll(open) {
+        document.querySelectorAll('.faq-item').forEach(item => {
+            if (item.style.display !== 'none') {
+                open ? item.classList.add('open') : item.classList.remove('open');
+            }
+        });
+    }
+
+    function filterFaqs() {
+        const q = document.getElementById('faqSearch').value.toLowerCase().trim();
+        const items = [...document.querySelectorAll('#faqListWrap .faq-item')];
+        let visible = 0;
+        items.forEach(item => {
+            const show = !q || (item.dataset.title||'').includes(q) || (item.dataset.desc||'').includes(q) || item.dataset.id.includes(q);
+            item.style.display = show ? '' : 'none';
+            if (show) {
+                visible++;
+                if (q) item.classList.add('open');
+            }
+        });
+        document.getElementById('statVisible').textContent = visible;
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('faqSearch').value = '';
+        filterFaqs();
+    }
+
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteFaqTitle').textContent = `"${title}"`;
+        document.getElementById('deleteFaqId').value = id;
+        document.getElementById('deleteForm').action = `/Faq/DeleteFaq/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success:'fa-check-circle', info:'fa-circle-info', danger:'fa-triangle-exclamation' };
+        const colors = { success:'#10b981', info:'var(--accent)', danger:'#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+
+

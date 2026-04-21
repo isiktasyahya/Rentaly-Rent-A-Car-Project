@@ -1,0 +1,407 @@
+﻿@model Rentaly.WebUI.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="container-fluid px-4 py-4 dashboard-page">
+
+    <!-- HEADER -->
+    <div class="welcome-box mb-4">
+        <div>
+            <h2 class="mb-1 fw-bold">Rentaly Yönetim Paneli</h2>
+            <p class="mb-0 text-muted">Tüm operasyonlarınız tek ekranda, canlı takip altında.</p>
+        </div>
+
+        <div class="text-end">
+            <div class="today-date">@DateTime.Now.ToString("dd MMMM yyyy")</div>
+            <small class="text-muted">Canlı Veri Merkezi</small>
+        </div>
+    </div>
+
+    <!-- TOP KPI -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="kpi-card purple">
+                <div>
+                    <span>Toplam Araç</span>
+                    <h2>@Model.TotalCars</h2>
+                    <small>@Model.AvailableCars müsait araç</small>
+                </div>
+                <i class="fa-solid fa-car-side"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="kpi-card emerald">
+                <div>
+                    <span>Bugünkü Gelir</span>
+                    <h2>@Model.TodayRevenue.ToString("N0") ₺</h2>
+                    <small>Bugün tamamlanan işlemler</small>
+                </div>
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="kpi-card blue">
+                <div>
+                    <span>Bu Ay Gelir</span>
+                    <h2>@Model.ThisMonthRevenue.ToString("N0") ₺</h2>
+                    <small>Aylık toplam ciro</small>
+                </div>
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="kpi-card orange">
+                <div>
+                    <span>Toplam Rezervasyon</span>
+                    <h2>@Model.TotalRentals</h2>
+                    <small>@Model.PendingRentals bekleyen işlem</small>
+                </div>
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NEW DOUBLE CARD -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-xl-6">
+            <div class="kpi-card darkblue">
+                <div>
+                    <span>Aktif Kiralama Geliri</span>
+                    <h2>@Model.ActiveRevenue.ToString("N0") ₺</h2>
+                    <small>Devam eden kiralamalar</small>
+                </div>
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="kpi-card rose">
+                <div>
+                    <span>Aktif Kiralama Sayısı</span>
+                    <h2>@Model.ActiveRentalCount</h2>
+                    <small>Şu anda yolda olan araçlar</small>
+                </div>
+                <i class="fa-solid fa-road"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MIDDLE -->
+    <div class="row g-4 mb-4">
+
+        <!-- LEFT -->
+        <div class="col-xl-8">
+            <div class="panel-card h-100">
+                <div class="section-title mb-4">Son 7 Gün Performansı</div>
+
+                <div class="row g-3">
+
+                    @for (int i = 0; i < Model.Last7DayLabels.Count; i++)
+                    {
+                        <div class="col">
+                            <div class="mini-chart-card">
+
+                                <span class="mini-date">@Model.Last7DayLabels[i]</span>
+
+                                <h5>@Model.Last7DayRevenue[i].ToString("N0") ₺</h5>
+
+                                <small>@Model.Last7DayRentalCounts[i] rezervasyon</small>
+
+                                <div class="mini-bar"
+                                     style="height:@(Model.Last7DayRentalCounts[i] * 10 + 25)px">
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-xl-4">
+
+            <div class="panel-card mb-4">
+                <div class="section-title mb-4">Genel Performans</div>
+
+                <div class="rate-box">
+                    <span>Araç Doluluk</span>
+                    <strong>@Model.OccupancyRate%</strong>
+                </div>
+                <div class="progress custom-progress mb-4">
+                    <div class="progress-bar bg-success"
+                         style="width:@Model.OccupancyRate%">
+                    </div>
+                </div>
+
+                <div class="rate-box">
+                    <span>Onay Oranı</span>
+                    <strong>@Model.ApprovalRate%</strong>
+                </div>
+                <div class="progress custom-progress">
+                    <div class="progress-bar bg-primary"
+                         style="width:@Model.ApprovalRate%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="section-title mb-3">Hızlı Erişim</div>
+
+                <a href="/Rental/RentalList/" class="quick-link">
+                    <i class="fa-solid fa-calendar-days"></i> Rezervasyonlar
+                </a>
+
+                <a href="/Car/CarList/" class="quick-link">
+                    <i class="fa-solid fa-car"></i> Araç Yönetimi
+                </a>
+
+                <a href="/Customer/CustomerList/" class="quick-link">
+                    <i class="fa-solid fa-user-group"></i> Müşteriler
+                </a>
+
+                <a href="/Branch/BranchList/" class="quick-link">
+                    <i class="fa-solid fa-building"></i> Şubeler
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div class="panel-card">
+        <div class="section-title mb-3">Son Rezervasyonlar</div>
+
+        <div class="table-responsive">
+            <table class="table modern-table align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Müşteri</th>
+                        <th>Araç</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.RecentRentals)
+                    {
+                        string badge =
+                        item.Status == "Onaylandı" ? "success" :
+                        item.Status == "Beklemede" ? "warning" :
+                        "danger";
+
+                        <tr>
+                            <td>#@item.RentalId</td>
+
+                            <td>
+                                <div class="fw-bold">@item.CustomerName</div>
+                                <small class="text-muted">@item.CustomerPhone</small>
+                            </td>
+
+                            <td>@item.CarBrand @item.CarModel</td>
+
+                            <td>
+                                @item.PickupDate.ToString("dd.MM.yyyy")
+                                <br />
+                                <small class="text-muted">@item.ReturnDate.ToString("dd.MM.yyyy")</small>
+                            </td>
+
+                            <td class="fw-bold text-success">
+                                @item.TotalPrice.ToString("N0") ₺
+                            </td>
+
+                            <td>
+                                <span class="badge bg-@badge rounded-pill px-3 py-2">
+                                    @item.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .dashboard-page {
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .welcome-box {
+        background: #fff;
+        border-radius: 20px;
+        padding: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,.05);
+    }
+
+    .today-date {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .kpi-card {
+        color: #fff;
+        border-radius: 20px;
+        padding: 26px;
+        min-height: 145px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 14px 25px rgba(0,0,0,.08);
+        transition: .25s;
+    }
+
+        .kpi-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .kpi-card span {
+            font-size: 13px;
+            opacity: .95;
+        }
+
+        .kpi-card h2 {
+            font-size: 32px;
+            margin: 6px 0;
+            font-weight: 800;
+        }
+
+        .kpi-card i {
+            font-size: 42px;
+            opacity: .18;
+        }
+
+    .purple {
+        background: linear-gradient(135deg,#7c3aed,#4f46e5);
+    }
+
+    .emerald {
+        background: linear-gradient(135deg,#10b981,#059669);
+    }
+
+    .blue {
+        background: linear-gradient(135deg,#3b82f6,#1d4ed8);
+    }
+
+    .orange {
+        background: linear-gradient(135deg,#f59e0b,#d97706);
+    }
+
+    .darkblue {
+        background: linear-gradient(135deg,#0f172a,#1e3a8a);
+    }
+
+    .rose {
+        background: linear-gradient(135deg,#e11d48,#be123c);
+    }
+
+    .panel-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.04);
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .mini-chart-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        height: 100%;
+    }
+
+    .mini-date {
+        font-weight: 700;
+        color: #64748b;
+    }
+
+    .mini-chart-card h5 {
+        font-size: 22px;
+        font-weight: 800;
+        margin: 10px 0 5px;
+    }
+
+    .mini-chart-card small {
+        color: #94a3b8;
+    }
+
+    .mini-bar {
+        margin: 14px auto 0;
+        width: 18px;
+        border-radius: 30px;
+        background: linear-gradient(to top,#4338ca,#818cf8);
+    }
+
+    .rate-box {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .custom-progress {
+        height: 12px;
+        border-radius: 20px;
+        background: #eef2f7;
+    }
+
+    .quick-link {
+        display: block;
+        text-decoration: none;
+        color: #334155;
+        background: #f8fafc;
+        padding: 14px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+        .quick-link:hover {
+            background: #eef2ff;
+            color: #4338ca;
+            transform: translateX(4px);
+        }
+
+    .modern-table thead th {
+        border: none;
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .modern-table tbody td {
+        padding: 18px 8px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .modern-table tbody tr:hover {
+        background: #fafafa;
+    }
+</style>

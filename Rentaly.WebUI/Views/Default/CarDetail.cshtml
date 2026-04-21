@@ -1,0 +1,346 @@
+﻿@model Rentaly.EntityLayer.Entities.Car
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zxx">
+
+@await Component.InvokeAsync("_DefaultHead");
+
+<body>
+    <div id="wrapper">
+
+        <div id="de-preloader"></div>
+        @await Component.InvokeAsync("_DefaultHeader")
+
+        <div class="no-bottom no-top zebra" id="content">
+            <div id="top"></div>
+
+            <section id="subheader" class="jarallax text-light">
+                <img src="/RentalyTema/images/background/2.jpg" class="jarallax-img" alt="">
+                <div class="center-y relative text-center">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h1>@(Model.Brand?.BrandName) @(Model.CarModel?.ModelName)</h1>
+                                <div class="small-border"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-car-details">
+                <div class="container">
+                    <div class="row g-5">
+
+                        <!-- SOL: Görsel -->
+                        <div class="col-lg-6">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl"
+                                     alt="@Model.Brand?.BrandName @Model.CarModel?.ModelName"
+                                     class="img-fluid"
+                                     style="width:100%;border-radius:16px;object-fit:cover;max-height:420px;box-shadow:0 8px 30px rgba(0,0,0,0.12);" />
+                            }
+                            else
+                            {
+                                <div style="width:100%;height:380px;background:linear-gradient(135deg,#f0f4ff,#e8efff);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                                    <i class="fa fa-car" style="font-size:80px;color:#c7d2fe;opacity:0.4;"></i>
+                                </div>
+                            }
+                            <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+                                <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:99px;font-size:13px;font-weight:700;background:@(Model.IsAvailable ? "#d1fae5" : "#fee2e2");color:@(Model.IsAvailable ? "#065f46" : "#991b1b");">
+                                    <i class="fa @(Model.IsAvailable ? "fa-check-circle" : "fa-times-circle")"></i>
+                                    @(Model.IsAvailable ? "Müsait" : "Müsait Değil")
+                                </span>
+                                <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:99px;font-size:13px;font-weight:700;background:#f1f5f9;color:#475569;letter-spacing:1px;">
+                                    <i class="fa fa-id-card"></i>
+                                    @Model.PlateNumber
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- ORTA: Bilgiler -->
+                        <div class="col-lg-3">
+                            <h3>@(Model.Brand?.BrandName) @(Model.CarModel?.ModelName) @Model.Year</h3>
+                            <p style="color:#6b7280;line-height:1.7;font-size:14px;">
+                                @(Model.Brand?.BrandName) @(Model.CarModel?.ModelName),
+                                @Model.Year model yılına ait bu araç
+                                @(Model.Category?.CategoryName) kategorisinde yer almaktadır.
+                                @Model.SeatCount kişilik kapasitesi ve @Model.FuelType yakıt tipiyle konforlu bir sürüş deneyimi sunar.
+                            </p>
+
+                            <div class="spacer-10"></div>
+                            <h4>Detaylar</h4>
+                            <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;width:50%;">Kategori</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@(Model.Category?.CategoryName ?? "-")</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Koltuk</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.SeatCount Kişilik</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Bagaj</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.LuggageCount Valiz</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Yakıt Tipi</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@(Model.FuelType ?? "-")</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Model Yılı</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.Year</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Kilometre</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.Kilometer.ToString("N0") km</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Şube</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@(Model.Branch?.BranchName ?? "-")</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Plaka</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.PlateNumber</td>
+                                </tr>
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Depozito</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:#1a1a2e;">@Model.DepositAmount.ToString("N0") ₺</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 0;color:#9ca3af;font-size:14px;">Durum</td>
+                                    <td style="padding:10px 0;font-weight:700;font-size:14px;color:@(Model.IsAvailable ? "#059669" : "#dc2626");">
+                                        @(Model.IsAvailable ? "Müsait" : "Müsait Değil")
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="spacer-single"></div>
+                            <a asp-controller="Default" asp-action="CarList"
+                               style="display:inline-flex;align-items:center;gap:8px;color:#6b7280;font-size:13px;text-decoration:none;">
+                                <i class="fa fa-arrow-left"></i> Araç Listesine Dön
+                            </a>
+                        </div>
+
+                        <!-- SAĞ: Booking -->
+                        <div class="col-lg-3">
+
+                            <div class="de-price text-center">
+                                Günlük Ücret
+                                <h3>@Model.DailyPrice.ToString("N0") ₺</h3>
+                            </div>
+
+                            <div class="spacer-30"></div>
+
+                            <div class="de-box mb25">
+                                <form asp-controller="Booking" asp-action="CreateBooking" method="get">
+                                    @*@Html.AntiForgeryToken()*@
+                                    <input type="hidden" name="CarId" value="@Model.CarId" />
+
+                                    <h4>Bu Aracı Kirala</h4>
+                                    <div class="spacer-20"></div>
+
+                                    <!-- Alış Şubesi -->
+                                    <div class="mb20">
+                                        <h5>Alış Şubesi</h5>
+                                        <select name="PickupBranchId" class="form-control"
+                                                style="height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 12px;"
+                                                required>
+                                            <option value="" disabled selected>Şube Seçin</option>
+                                            @if (ViewBag.Branches != null)
+                                            {
+                                                foreach (var item in ViewBag.Branches as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Dönüş Şubesi -->
+                                    <div class="mb20">
+                                        <h5>Dönüş Şubesi</h5>
+                                        <select name="ReturnBranchId" class="form-control"
+                                                style="height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 12px;"
+                                                required>
+                                            <option value="" disabled selected>Şube Seçin</option>
+                                            @if (ViewBag.Branches != null)
+                                            {
+                                                foreach (var item in ViewBag.Branches as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)
+                                                {
+                                                    <option value="@item.Value">@item.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Alış Tarihi & Saati -->
+                                    <div class="mb20">
+                                        <h5>Alış Tarihi & Saati</h5>
+                                        <div style="display:flex;gap:8px;">
+                                            <input type="date"
+                                                   name="PickupDate"
+                                                   id="pickupDate"
+                                                   class="form-control"
+                                                   style="flex:1;height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 12px;"
+                                                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                                   min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                                   required />
+                                            <select name="PickupTime"
+                                                    id="pickupTime"
+                                                    class="form-control"
+                                                    style="width:90px;height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 8px;">
+                                                @for (int h = 0; h < 24; h++)
+                                                {
+                                                    foreach (var m in new[] { "00", "30" })
+                                                    {
+                                                        var t = $"{h:D2}:{m}";
+                                                        <option value="@t">@t</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dönüş Tarihi & Saati -->
+                                    <div class="mb20">
+                                        <h5>Dönüş Tarihi & Saati</h5>
+                                        <div style="display:flex;gap:8px;">
+                                            <input type="date"
+                                                   name="ReturnDate"
+                                                   id="returnDate"
+                                                   class="form-control"
+                                                   style="flex:1;height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 12px;"
+                                                   value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                                                   required />
+                                            <select name="ReturnTime"
+                                                    id="returnTime"
+                                                    class="form-control"
+                                                    style="width:90px;height:48px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-weight:600;padding:0 8px;">
+                                                @for (int h = 0; h < 24; h++)
+                                                {
+                                                    foreach (var m in new[] { "00", "30" })
+                                                    {
+                                                        var t = $"{h:D2}:{m}";
+                                                        <option value="@t">@t</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fiyat Özeti -->
+                                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+                                        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                                            <span style="font-size:13px;color:#6b7280;">Günlük Ücret</span>
+                                            <span style="font-weight:700;color:#1a1a2e;">@Model.DailyPrice.ToString("N0") ₺</span>
+                                        </div>
+                                        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                                            <span style="font-size:13px;color:#6b7280;">Kiralama Süresi</span>
+                                            <span style="font-weight:700;color:#1a1a2e;" id="rentalDays">— Gün</span>
+                                        </div>
+                                        <div style="border-top:1px solid #bbf7d0;padding-top:10px;display:flex;justify-content:space-between;align-items:center;">
+                                            <span style="font-size:14px;font-weight:700;color:#1a1a2e;">Toplam Tutar</span>
+                                            <span style="font-size:20px;font-weight:800;color:#16a34a;" id="totalPrice">— ₺</span>
+                                        </div>
+                                    </div>
+
+                                    <input type="submit" value="Şimdi Kirala" class="btn-main btn-fullwidth" />
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+
+                            <!-- Share -->
+                            <div class="de-box">
+                                <h4>Paylaş</h4>
+                                <div class="de-color-icons">
+                                    <span><i class="fa fa-twitter fa-lg"></i></span>
+                                    <span><i class="fa fa-facebook fa-lg"></i></span>
+                                    <span><i class="fa fa-linkedin fa-lg"></i></span>
+                                    <span><i class="fa fa-pinterest fa-lg"></i></span>
+                                    <span><i class="fa fa-envelope fa-lg"></i></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <a href="#" id="back-to-top"></a>
+        @await Component.InvokeAsync("_DefaultFooter")
+    </div>
+
+    <script src="/RentalyTema/js/plugins.js"></script>
+    <script src="/RentalyTema/js/designesia.js"></script>
+
+    <script>
+        // Günlük fiyat — Razor'dan al
+        var DAILY_PRICE = @((int)Model.DailyPrice);
+
+        function calcTotal() {
+            var pickupDate = document.getElementById('pickupDate').value;
+            var returnDate = document.getElementById('returnDate').value;
+            var pickupTime = document.getElementById('pickupTime').value;
+            var returnTime = document.getElementById('returnTime').value;
+
+            if (!pickupDate || !returnDate) {
+                document.getElementById('rentalDays').textContent = '— Gün';
+                document.getElementById('totalPrice').textContent = '— ₺';
+                return;
+            }
+
+            // Tarih + saat birleştir
+            var pickup = new Date(pickupDate + 'T' + pickupTime + ':00');
+            var ret    = new Date(returnDate + 'T' + returnTime + ':00');
+
+            var diffMs = ret - pickup;
+
+            if (diffMs <= 0) {
+                document.getElementById('rentalDays').textContent = '!';
+                document.getElementById('totalPrice').textContent = 'Geçersiz tarih';
+                return;
+            }
+
+            // Saat farkı → yukarı yuvarla → gün sayısı
+            var diffHours = diffMs / (1000 * 60 * 60);
+            var days      = Math.ceil(diffHours / 24);
+
+            // Toplam = günlük fiyat × gün sayısı
+            var total = DAILY_PRICE * days;
+
+            document.getElementById('rentalDays').textContent = days + ' Gün';
+            document.getElementById('totalPrice').textContent = total.toLocaleString('tr-TR') + ' ₺';
+        }
+
+        window.addEventListener('load', function () {
+            // Tüm inputlara listener ekle
+            document.getElementById('pickupDate').addEventListener('change', function () {
+                // Return date min'ini güncelle
+                var ret = document.getElementById('returnDate');
+                if (this.value >= ret.value) {
+                    var d = new Date(this.value);
+                    d.setDate(d.getDate() + 1);
+                    ret.value = d.toISOString().split('T')[0];
+                }
+                ret.min = this.value;
+                calcTotal();
+            });
+
+            document.getElementById('returnDate').addEventListener('change', calcTotal);
+            document.getElementById('pickupTime').addEventListener('change', calcTotal);
+            document.getElementById('returnTime').addEventListener('change', calcTotal);
+
+            // İlk yükleme hesabı
+            calcTotal();
+        });
+    </script>
+
+</body>
+</html>

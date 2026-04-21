@@ -1,0 +1,1472 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Car>
+
+@{
+    ViewData["Title"] = "CarList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+@section Styles {
+    <style>
+            /* ══════════════════════════════════════════
+           CAR LIST — Indigo Daylight · Signature
+        ══════════════════════════════════════════ */
+
+            .page-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 28px;
+            }
+
+            .page-title {
+                font-family: var(--font-display);
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+
+            .page-desc {
+                font-size: 13.5px;
+                color: var(--text-muted);
+                margin-top: 3px;
+            }
+
+            /* ── Stat Cards ── */
+            .stat-row {
+                display: grid;
+                grid-template-columns: repeat(4,1fr);
+                gap: 14px;
+                margin-bottom: 28px;
+            }
+
+            .s-card {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                padding: 18px 20px;
+                box-shadow: var(--card-shadow);
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                transition: all var(--t);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .s-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                    opacity: 0;
+                    transition: opacity var(--t);
+                }
+
+                .s-card.c-indigo::before {
+                    background: var(--accent);
+                }
+
+                .s-card.c-green::before {
+                    background: var(--emerald);
+                }
+
+                .s-card.c-red::before {
+                    background: var(--rose);
+                }
+
+                .s-card.c-amber::before {
+                    background: var(--amber);
+                }
+
+                .s-card:hover {
+                    box-shadow: var(--card-shadow-hover);
+                    transform: translateY(-2px);
+                    border-color: #c7d2fe;
+                }
+
+                    .s-card:hover::before {
+                        opacity: 1;
+                    }
+
+            .s-ico {
+                width: 46px;
+                height: 46px;
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 19px;
+                flex-shrink: 0;
+            }
+
+            .s-val {
+                font-family: var(--font-display);
+                font-size: 26px;
+                font-weight: 700;
+                color: var(--text-primary);
+                line-height: 1;
+                letter-spacing: -0.02em;
+            }
+
+            .s-lbl {
+                font-size: 12px;
+                color: var(--text-muted);
+                margin-top: 4px;
+                font-weight: 500;
+            }
+
+            /* ── Toolbar ── */
+            .car-toolbar {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                padding: 14px 18px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                box-shadow: var(--card-shadow);
+                margin-bottom: 22px;
+            }
+
+            .sw {
+                position: relative;
+                flex: 1;
+                min-width: 200px;
+            }
+
+                .sw i {
+                    position: absolute;
+                    left: 13px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--text-muted);
+                    font-size: 13px;
+                    pointer-events: none;
+                }
+
+            .s-input {
+                width: 100%;
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                padding: 9px 13px 9px 38px;
+                font-size: 13.5px;
+                font-family: var(--font-body);
+                color: var(--text-primary);
+                background: var(--page-bg);
+                outline: none;
+                transition: all var(--t-s);
+            }
+
+                .s-input:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+                .s-input::placeholder {
+                    color: var(--text-muted);
+                }
+
+            .t-select {
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                font-size: 13px;
+                font-family: var(--font-body);
+                padding: 9px 12px;
+                outline: none;
+                cursor: pointer;
+                transition: all var(--t-s);
+            }
+
+                .t-select:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+            .view-toggle {
+                display: flex;
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                overflow: hidden;
+                background: var(--page-bg);
+            }
+
+            .v-btn {
+                width: 36px;
+                height: 36px;
+                border: none;
+                background: transparent;
+                color: var(--text-muted);
+                cursor: pointer;
+                transition: all var(--t-s);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+            }
+
+                .v-btn.active {
+                    background: var(--accent);
+                    color: #fff;
+                }
+
+                .v-btn:hover:not(.active) {
+                    background: var(--accent-lighter);
+                    color: var(--accent);
+                }
+
+            .btn-reset {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 9px 14px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                cursor: pointer;
+                border: 1.5px solid var(--card-border);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                transition: all var(--t-s);
+                white-space: nowrap;
+            }
+
+                .btn-reset:hover {
+                    background: var(--accent-lighter);
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                }
+
+            .btn-add-car {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 20px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+                white-space: nowrap;
+            }
+
+                .btn-add-car:hover {
+                    background: var(--accent-hover);
+                    box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                    transform: translateY(-1px);
+                    color: #fff;
+                }
+
+            /* ══ ARAÇ KARTLARI ══ */
+            .cars-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+                gap: 18px;
+                margin-bottom: 20px;
+            }
+
+            .car-card {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                transition: all var(--t);
+                position: relative;
+            }
+
+                .car-card:hover {
+                    box-shadow: var(--card-shadow-hover);
+                    transform: translateY(-4px);
+                    border-color: #c7d2fe;
+                }
+
+            /* Görsel Alan */
+            .car-img-wrap {
+                position: relative;
+                height: 175px;
+                background: linear-gradient(135deg,var(--accent-lighter) 0%,#eef2ff 100%);
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .car-img-wrap img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transition: transform 0.5s ease;
+                }
+
+            .car-card:hover .car-img-wrap img {
+                transform: scale(1.05);
+            }
+
+            .car-img-ph {
+                font-size: 64px;
+                color: var(--accent);
+                opacity: 0.15;
+            }
+
+            /* Overlay gradient alt kısımda */
+            .car-img-wrap::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: linear-gradient(transparent, rgba(30,27,75,0.18));
+                pointer-events: none;
+            }
+
+            /* Durum badge */
+            .car-status-badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 4px 10px;
+                border-radius: 99px;
+                font-size: 11.5px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                backdrop-filter: blur(6px);
+                z-index: 1;
+            }
+
+            .status-available {
+                background: rgba(16,185,129,0.90);
+                color: #fff;
+            }
+
+            .status-unavailable {
+                background: rgba(244,63,94,0.90);
+                color: #fff;
+            }
+
+            /* Yıl badge */
+            .car-year-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(15,17,27,0.65);
+                color: #fff;
+                padding: 4px 10px;
+                border-radius: 99px;
+                font-size: 11.5px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                backdrop-filter: blur(6px);
+                z-index: 1;
+            }
+
+            /* Kart Gövde */
+            .car-card-body {
+                padding: 16px 18px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .car-title-row {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .car-title {
+                font-family: var(--font-display);
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--text-primary);
+                line-height: 1.3;
+            }
+
+            .car-plate {
+                background: var(--page-bg);
+                border: 1.5px solid var(--card-border);
+                color: var(--text-primary);
+                font-family: var(--font-display);
+                font-size: 11px;
+                font-weight: 800;
+                padding: 3px 9px;
+                border-radius: var(--radius-xs);
+                letter-spacing: 1.5px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            /* Spec chips */
+            .car-specs {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .spec-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 4px 10px;
+                border-radius: 99px;
+                background: var(--page-bg);
+                border: 1.5px solid var(--card-border);
+                font-size: 12px;
+                color: var(--text-secondary);
+                font-weight: 500;
+                white-space: nowrap;
+                transition: all var(--t-s);
+            }
+
+                .spec-chip i {
+                    font-size: 11px;
+                    color: var(--accent);
+                }
+
+            .car-card:hover .spec-chip {
+                border-color: #c7d2fe;
+            }
+
+            /* Yakıt badge */
+            .fuel-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 4px 10px;
+                border-radius: 99px;
+                font-size: 11.5px;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .fuel-benzin {
+                background: #fff4ed;
+                color: #c2410c;
+            }
+
+            .fuel-dizel {
+                background: #f0fdf4;
+                color: #166534;
+            }
+
+            .fuel-elektrik {
+                background: #eff6ff;
+                color: #1d4ed8;
+            }
+
+            .fuel-hibrit {
+                background: #ecfdf5;
+                color: #065f46;
+            }
+
+            .fuel-lpg {
+                background: #fdf4ff;
+                color: #6b21a8;
+            }
+
+            .fuel-default {
+                background: var(--page-bg);
+                color: var(--text-muted);
+            }
+
+            /* Fiyat + KM */
+            .car-price-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-top: 12px;
+                border-top: 1px solid var(--card-border);
+                margin-top: auto;
+            }
+
+            .car-price-val {
+                font-family: var(--font-display);
+                font-size: 20px;
+                font-weight: 800;
+                color: var(--accent);
+            }
+
+            .car-price-lbl {
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: 1px;
+            }
+
+            .car-km {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 12.5px;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+                .car-km i {
+                    font-size: 11px;
+                    color: var(--text-muted);
+                }
+
+            /* Kart Footer */
+            .car-card-footer {
+                padding: 12px 14px;
+                border-top: 1px solid var(--card-border);
+                background: #fafbff;
+                display: flex;
+                gap: 7px;
+            }
+
+            /* ══ LİSTE GÖRÜNÜMÜ ══ */
+            .cars-list {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .car-list-item {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 12px 18px;
+                transition: all var(--t);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .car-list-item::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 4px;
+                    background: linear-gradient(180deg,var(--accent) 0%,#818cf8 100%);
+                }
+
+                .car-list-item:hover {
+                    box-shadow: var(--card-shadow-hover);
+                    transform: translateX(3px);
+                    border-color: #c7d2fe;
+                }
+
+            .car-list-thumb {
+                width: 86px;
+                height: 62px;
+                border-radius: var(--radius);
+                background: linear-gradient(135deg,var(--accent-lighter),#eef2ff);
+                overflow: hidden;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1.5px solid var(--card-border);
+            }
+
+                .car-list-thumb img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .car-list-thumb i {
+                    font-size: 26px;
+                    color: var(--accent);
+                    opacity: 0.25;
+                }
+
+            .car-list-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .car-list-title {
+                font-family: var(--font-display);
+                font-size: 14.5px;
+                font-weight: 700;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .car-list-sub {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 6px;
+                flex-wrap: wrap;
+            }
+
+            .car-list-meta {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 12px;
+                color: var(--text-muted);
+            }
+
+                .car-list-meta i {
+                    font-size: 11px;
+                    color: var(--accent);
+                }
+
+            .car-list-price {
+                font-family: var(--font-display);
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--accent);
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+                .car-list-price small {
+                    font-size: 11px;
+                    color: var(--text-muted);
+                    font-weight: 400;
+                    display: block;
+                    text-align: right;
+                    margin-top: 1px;
+                }
+
+            .car-list-actions {
+                display: flex;
+                gap: 6px;
+                flex-shrink: 0;
+            }
+
+            /* ── Aksion Butonları ── */
+            .tbl-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 7px 12px;
+                border-radius: var(--radius-sm);
+                font-size: 12.5px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                cursor: pointer;
+                transition: all var(--t-s);
+                border: 1.5px solid transparent;
+                text-decoration: none;
+                justify-content: center;
+                white-space: nowrap;
+            }
+
+            .tbl-btn-detail {
+                background: var(--accent-lighter);
+                color: var(--accent-text);
+                border-color: #c7d2fe;
+                flex: 1;
+            }
+
+                .tbl-btn-detail:hover {
+                    background: var(--accent);
+                    color: #fff;
+                    border-color: var(--accent);
+                    box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+                }
+
+            .tbl-btn-edit {
+                background: #fef3c7;
+                color: #92400e;
+                border-color: #fde68a;
+                flex: 1;
+            }
+
+                .tbl-btn-edit:hover {
+                    background: #f59e0b;
+                    color: #fff;
+                    border-color: #f59e0b;
+                }
+
+            .tbl-btn-delete {
+                background: #fff1f2;
+                color: #e11d48;
+                border-color: #fecdd3;
+                padding: 7px 10px;
+            }
+
+                .tbl-btn-delete:hover {
+                    background: #f43f5e;
+                    color: #fff;
+                    border-color: #f43f5e;
+                }
+
+            /* ── Empty State ── */
+            .empty-state {
+                padding: 72px 20px;
+                text-align: center;
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+            }
+
+            .empty-icon {
+                width: 80px;
+                height: 80px;
+                background: var(--accent-lighter);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 32px;
+                color: var(--accent);
+                margin: 0 auto 20px;
+                position: relative;
+            }
+
+                .empty-icon::after {
+                    content: '';
+                    position: absolute;
+                    inset: -6px;
+                    border-radius: 50%;
+                    border: 2px dashed #c7d2fe;
+                    animation: spin 12s linear infinite;
+                }
+
+            @@keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .empty-title {
+                font-family: var(--font-display);
+                font-size: 17px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 6px;
+            }
+
+            /* ── Pagination ── */
+            .paging-wrap {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 4px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .paging-info {
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+            .paging-btns {
+                display: flex;
+                gap: 4px;
+            }
+
+            .page-btn {
+                width: 34px;
+                height: 34px;
+                border: 1.5px solid var(--card-border);
+                background: var(--card-bg);
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all var(--t-s);
+                color: var(--text-secondary);
+                font-family: var(--font-display);
+            }
+
+                .page-btn:hover {
+                    background: var(--accent-lighter);
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                }
+
+                .page-btn.active {
+                    background: var(--accent);
+                    border-color: var(--accent);
+                    color: #fff;
+                    box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+                }
+
+                .page-btn:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                }
+
+            /* ── Delete Modal ── */
+            .modal-content {
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+            }
+
+            .modal-header {
+                border-bottom: 1px solid var(--card-border);
+                padding: 16px 20px;
+            }
+
+            .modal-footer {
+                border-top: 1px solid var(--card-border);
+                padding: 14px 20px;
+                gap: 8px;
+                background: #fafbff;
+            }
+
+            .modal-title {
+                font-family: var(--font-display);
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .btn-cancel {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 9px 18px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                border: 1.5px solid var(--card-border);
+                cursor: pointer;
+                transition: all var(--t-s);
+            }
+
+                .btn-cancel:hover {
+                    background: var(--card-border);
+                }
+
+            .btn-confirm-delete {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                background: #f43f5e;
+                color: #fff;
+                border: none;
+                border-radius: var(--radius-sm);
+                padding: 9px 22px;
+                font-size: 13.5px;
+                font-weight: 700;
+                font-family: var(--font-body);
+                cursor: pointer;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+            }
+
+                .btn-confirm-delete:hover {
+                    background: #e11d48;
+                    transform: translateY(-1px);
+                }
+
+            /* Toast */
+            .rc-toast {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius);
+                box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+                padding: 12px 16px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 13.5px;
+                min-width: 260px;
+                animation: toastIn 0.3s ease both;
+            }
+
+            @@keyframes toastIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Giriş animasyonu */
+            .car-card {
+                animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+            }
+
+                .car-card:nth-child(1) {
+                    animation-delay: 0.03s;
+                }
+
+                .car-card:nth-child(2) {
+                    animation-delay: 0.06s;
+                }
+
+                .car-card:nth-child(3) {
+                    animation-delay: 0.09s;
+                }
+
+                .car-card:nth-child(4) {
+                    animation-delay: 0.12s;
+                }
+
+                .car-card:nth-child(5) {
+                    animation-delay: 0.15s;
+                }
+
+                .car-card:nth-child(6) {
+                    animation-delay: 0.18s;
+                }
+
+            @@keyframes fadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(14px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @@media (max-width:992px) {
+                .stat-row {
+                    grid-template-columns: repeat(2,1fr);
+                }
+            }
+
+            @@media (max-width:575px) {
+                .cars-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .stat-row {
+                    grid-template-columns: repeat(2,1fr);
+                }
+
+                .car-list-price {
+                    display: none;
+                }
+
+                .car-list-thumb {
+                    width: 66px;
+                    height: 50px;
+                }
+            }
+    </style>
+}
+
+<!-- ═══ Page Header ═══ -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Araç Listesi</h1>
+        <p class="page-desc">Araç envanterini görüntüleyin ve yönetin.</p>
+    </div>
+    <a href="/Car/CreateCar" class="btn-add-car">
+        <i class="fa-solid fa-plus"></i> Yeni Araç
+    </a>
+</div>
+
+<!-- ═══ Stat Cards ═══ -->
+<div class="stat-row">
+    <div class="s-card c-indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-car-side"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Araç</div>
+        </div>
+    </div>
+    <div class="s-card c-green">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;">@Model.Count(c => c.IsAvailable)</div>
+            <div class="s-lbl">Müsait</div>
+        </div>
+    </div>
+    <div class="s-card c-red">
+        <div class="s-ico" style="background:#fff1f2;color:var(--rose);">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:var(--rose);">@Model.Count(c => !c.IsAvailable)</div>
+            <div class="s-lbl">Müsait Değil</div>
+        </div>
+    </div>
+    <div class="s-card c-amber">
+        <div class="s-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-turkish-lira-sign"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#d97706;font-size:20px;">
+                @(Model.Any() ? Model.Average(c => c.DailyPrice).ToString("N0") : "0") ₺
+            </div>
+            <div class="s-lbl">Ort. Günlük Fiyat</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Toolbar ═══ -->
+<div class="car-toolbar">
+    <div class="sw">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="carSearch" placeholder="Plaka, kategori, yakıt ara…" oninput="filterCars()" />
+    </div>
+    <select class="t-select" id="filterAvailable" onchange="filterCars()" style="min-width:148px;">
+        <option value="all">Tüm Araçlar</option>
+        <option value="available">Müsait</option>
+        <option value="unavailable">Müsait Değil</option>
+    </select>
+    <select class="t-select" id="filterFuel" onchange="filterCars()" style="min-width:130px;">
+        <option value="all">Tüm Yakıtlar</option>
+        <option value="Benzin">Benzin</option>
+        <option value="Dizel">Dizel</option>
+        <option value="Elektrik">Elektrik</option>
+        <option value="Hibrit">Hibrit</option>
+        <option value="LPG">LPG</option>
+    </select>
+    <select class="t-select" id="sortSelect" onchange="filterCars()" style="min-width:185px;">
+        <option value="id-asc">ID — Artan</option>
+        <option value="id-desc">ID — Azalan</option>
+        <option value="price-asc">Fiyat — Düşükten Yükseğe</option>
+        <option value="price-desc">Fiyat — Yüksekten Düşüğe</option>
+        <option value="year-desc">Yıl — Yeniden Eskiye</option>
+        <option value="km-asc">KM — Az'dan Çok'a</option>
+    </select>
+    <div class="view-toggle">
+        <button class="v-btn active" id="btnGridView" onclick="setView('grid')" title="Kart Görünümü">
+            <i class="fa-solid fa-grip"></i>
+        </button>
+        <button class="v-btn" id="btnListView" onclick="setView('list')" title="Liste Görünümü">
+            <i class="fa-solid fa-list"></i>
+        </button>
+    </div>
+    <button class="btn-reset" onclick="resetCarFilters()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- ═══ KART GÖRÜNÜMÜ ═══ -->
+<div class="cars-grid" id="carsGrid">
+    @foreach (var car in Model)
+    {
+        var fuelClass = (car.FuelType ?? "").ToLower() switch
+        {
+            "benzin" => "fuel-benzin",
+            "dizel" => "fuel-dizel",
+            "elektrik" => "fuel-elektrik",
+            "hibrit" => "fuel-hibrit",
+            "lpg" => "fuel-lpg",
+            _ => "fuel-default"
+        };
+        var fuelIcon = (car.FuelType ?? "").ToLower() switch
+        {
+            "elektrik" => "fa-bolt",
+            "hibrit" => "fa-leaf",
+            "lpg" => "fa-fire-flame-simple",
+            _ => "fa-gas-pump"
+        };
+
+        <div class="car-card"
+             data-id="@car.CarId"
+             data-plate="@car.PlateNumber?.ToLower()"
+             data-fuel="@car.FuelType"
+             data-available="@car.IsAvailable.ToString().ToLower()"
+             data-price="@car.DailyPrice"
+             data-year="@car.Year"
+             data-km="@car.Kilometer">
+
+            <!-- Görsel -->
+            <div class="car-img-wrap">
+                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                {
+                    <img src="@car.ImageUrl" alt="@car.PlateNumber" loading="lazy" />
+                }
+                else
+                {
+                    <div class="car-img-ph"><i class="fa-solid fa-car-side"></i></div>
+                }
+                <span class="car-status-badge @(car.IsAvailable ? "status-available" : "status-unavailable")">
+                    <i class="fa-solid @(car.IsAvailable ? "fa-circle-check" : "fa-circle-xmark")"></i>
+                    @(car.IsAvailable ? "Müsait" : "Dolu")
+                </span>
+                <span class="car-year-badge">@car.Year</span>
+            </div>
+
+            <!-- Gövde -->
+            <div class="car-card-body">
+                <div class="car-title-row">
+                    <div class="car-title">@(car.Category?.CategoryName ?? "Araç") &nbsp;#@car.CarId</div>
+                    <span class="car-plate">@car.PlateNumber</span>
+                </div>
+
+                <div class="car-specs">
+                    <span class="spec-chip"><i class="fa-solid fa-user-group"></i>@car.SeatCount Kişi</span>
+                    <span class="spec-chip"><i class="fa-solid fa-suitcase-rolling"></i>@car.LuggageCount Bavul</span>
+                    <span class="fuel-chip @fuelClass"><i class="fa-solid @fuelIcon"></i>@car.FuelType</span>
+                </div>
+
+                <div class="car-price-row">
+                    <div>
+                        <div class="car-price-val">@car.DailyPrice.ToString("N0") ₺</div>
+                        <div class="car-price-lbl">günlük</div>
+                    </div>
+                    <div class="car-km">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        @car.Kilometer.ToString("N0") km
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="car-card-footer">
+                <a href="/Car/CarDetail/@car.CarId" class="tbl-btn tbl-btn-detail">
+                    <i class="fa-solid fa-eye"></i> Detay
+                </a>
+                <a href="/Car/UpdateCar/@car.CarId" class="tbl-btn tbl-btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                </a>
+                <a href="/Car/DeleteCar/@car.CarId" class="tbl-btn tbl-btn-delete"
+                        onclick="openDeleteModal(@car.CarId, '@car.PlateNumber')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- ═══ LİSTE GÖRÜNÜMÜ ═══ -->
+<div class="cars-list" id="carsList" style="display:none;">
+    @foreach (var car in Model)
+    {
+        var fuelClass = (car.FuelType ?? "").ToLower() switch
+        {
+            "benzin" => "fuel-benzin",
+            "dizel" => "fuel-dizel",
+            "elektrik" => "fuel-elektrik",
+            "hibrit" => "fuel-hibrit",
+            "lpg" => "fuel-lpg",
+            _ => "fuel-default"
+        };
+        var fuelIcon = (car.FuelType ?? "").ToLower() switch
+        {
+            "elektrik" => "fa-bolt",
+            "hibrit" => "fa-leaf",
+            "lpg" => "fa-fire-flame-simple",
+            _ => "fa-gas-pump"
+        };
+
+        <div class="car-list-item"
+             data-id="@car.CarId"
+             data-plate="@car.PlateNumber?.ToLower()"
+             data-fuel="@car.FuelType"
+             data-available="@car.IsAvailable.ToString().ToLower()"
+             data-price="@car.DailyPrice"
+             data-year="@car.Year"
+             data-km="@car.Kilometer">
+
+            <div class="car-list-thumb">
+                @if (!string.IsNullOrEmpty(car.ImageUrl))
+                {
+                    <img src="@car.ImageUrl" alt="@car.PlateNumber" loading="lazy" />
+                }
+                else
+                {
+                    <i class="fa-solid fa-car-side"></i>
+                }
+            </div>
+
+            <div class="car-list-info">
+                <div class="car-list-title">
+                    @(car.Category?.CategoryName ?? "Araç") — @car.PlateNumber
+                    <span class="car-status-badge @(car.IsAvailable ? "status-available" : "status-unavailable")" style="font-size:10.5px;padding:2px 8px;position:static;">
+                        @(car.IsAvailable ? "Müsait" : "Dolu")
+                    </span>
+                </div>
+                <div class="car-list-sub">
+                    <span class="car-list-meta"><i class="fa-solid fa-calendar"></i>@car.Year</span>
+                    <span style="color:var(--card-border);">·</span>
+                    <span class="car-list-meta"><i class="fa-solid fa-gauge-high"></i>@car.Kilometer.ToString("N0") km</span>
+                    <span style="color:var(--card-border);">·</span>
+                    <span class="fuel-chip @fuelClass" style="padding:2px 8px;font-size:11px;">
+                        <i class="fa-solid @fuelIcon"></i>@car.FuelType
+                    </span>
+                    <span style="color:var(--card-border);">·</span>
+                    <span class="car-list-meta"><i class="fa-solid fa-user-group"></i>@car.SeatCount kişi</span>
+                </div>
+            </div>
+
+            <div class="car-list-price">
+                @car.DailyPrice.ToString("N0") ₺
+                <small>/ günlük</small>
+            </div>
+
+            <div class="car-list-actions">
+                <a href="/Car/Detail/@car.CarId" class="tbl-btn tbl-btn-detail" style="flex:none;padding:7px 10px;">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                <a href="/Car/Edit/@car.CarId" class="tbl-btn tbl-btn-edit" style="flex:none;padding:7px 10px;">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <button class="tbl-btn tbl-btn-delete"
+                        onclick="openDeleteModal(@car.CarId, '@car.PlateNumber')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-car-side"></i></div>
+    <div class="empty-title">Araç Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Filtre kriterinizle eşleşen araç yok.</p>
+    <button class="btn-add-car" onclick="resetCarFilters()">
+        <i class="fa-solid fa-rotate-left"></i> Filtreyi Temizle
+    </button>
+</div>
+
+<!-- Pagination -->
+<div class="paging-wrap" id="pagingWrap" style="display:none;">
+    <div class="paging-info" id="pagingInfo">—</div>
+    <div class="paging-btns" id="pagingBtns"></div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Aracı Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:22px;">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            Plakalı <strong id="deleteCarPlate">bu aracı</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">Bu işlem geri alınamaz. İlgili kira kayıtları etkilenebilir.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteCarId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    let currentView = 'grid';
+    let currentPage = 1;
+    const PAGE_SIZE = 12;
+
+    function setView(v) {
+        currentView = v;
+        document.getElementById('carsGrid').style.display = v === 'grid' ? 'grid' : 'none';
+        document.getElementById('carsList').style.display = v === 'list' ? 'flex'  : 'none';
+        document.getElementById('btnGridView').classList.toggle('active', v === 'grid');
+        document.getElementById('btnListView').classList.toggle('active', v === 'list');
+        currentPage = 1;
+        applyFilters();
+    }
+
+    function filterCars() { currentPage = 1; applyFilters(); }
+
+    function applyFilters() {
+        const q         = document.getElementById('carSearch').value.toLowerCase().trim();
+        const available = document.getElementById('filterAvailable').value;
+        const fuel      = document.getElementById('filterFuel').value;
+        const sort      = document.getElementById('sortSelect').value;
+
+        const gridCards = [...document.querySelectorAll('#carsGrid .car-card')];
+        const listItems = [...document.querySelectorAll('#carsList .car-list-item')];
+
+        const match = el => {
+            const plate   = el.dataset.plate || '';
+            const fuelVal = el.dataset.fuel  || '';
+            const isAvail = el.dataset.available === 'true';
+            const matchQ  = !q || plate.includes(q) || el.dataset.id.includes(q);
+            const matchA  = available === 'all' || (available === 'available' && isAvail) || (available === 'unavailable' && !isAvail);
+            const matchF  = fuel === 'all' || fuelVal === fuel;
+            return matchQ && matchA && matchF;
+        };
+
+        gridCards.forEach(c => c.setAttribute('data-show', match(c) ? '1' : '0'));
+        listItems.forEach(c => c.setAttribute('data-show', match(c) ? '1' : '0'));
+
+        const [sf, sd] = sort.split('-');
+        const sortFn = (list) => list.sort((a,b) => {
+            let va, vb;
+            if      (sf==='id')    { va=parseInt(a.dataset.id);      vb=parseInt(b.dataset.id); }
+            else if (sf==='price') { va=parseFloat(a.dataset.price); vb=parseFloat(b.dataset.price); }
+            else if (sf==='year')  { va=parseInt(a.dataset.year);    vb=parseInt(b.dataset.year); }
+            else if (sf==='km')    { va=parseInt(a.dataset.km);      vb=parseInt(b.dataset.km); }
+            if (va < vb) return sd==='asc' ? -1 :  1;
+            if (va > vb) return sd==='asc' ?  1 : -1;
+            return 0;
+        });
+
+        sortFn(gridCards); sortFn(listItems);
+        const gp = document.getElementById('carsGrid');
+        const lp = document.getElementById('carsList');
+        gridCards.forEach(c => gp.appendChild(c));
+        listItems.forEach(c => lp.appendChild(c));
+
+        buildPaging();
+    }
+
+    function resetCarFilters() {
+        document.getElementById('carSearch').value       = '';
+        document.getElementById('filterAvailable').value = 'all';
+        document.getElementById('filterFuel').value      = 'all';
+        document.getElementById('sortSelect').value      = 'id-asc';
+        currentPage = 1;
+        applyFilters();
+        showToast('Filtreler sıfırlandı.', 'info');
+    }
+
+    function buildPaging() {
+        const items    = currentView === 'grid'
+            ? [...document.querySelectorAll('#carsGrid .car-card')]
+            : [...document.querySelectorAll('#carsList .car-list-item')];
+        const filtered = items.filter(c => c.getAttribute('data-show') === '1');
+        const total    = filtered.length;
+        const pages    = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (currentPage > pages) currentPage = pages;
+
+        items.forEach(c => c.style.display = 'none');
+        filtered.forEach((c,i) => {
+            if (i >= (currentPage-1)*PAGE_SIZE && i < currentPage*PAGE_SIZE) c.style.display = '';
+        });
+
+        const other = currentView === 'grid'
+            ? [...document.querySelectorAll('#carsList .car-list-item')]
+            : [...document.querySelectorAll('#carsGrid .car-card')];
+        other.forEach(c => c.style.display = 'none');
+
+        document.getElementById('emptyState').style.display = total === 0 ? 'block' : 'none';
+
+        const from = total===0 ? 0 : (currentPage-1)*PAGE_SIZE+1;
+        const to   = Math.min(currentPage*PAGE_SIZE, total);
+        document.getElementById('pagingInfo').textContent = total > 0 ? `${from}–${to} / toplam ${total} araç` : '0 araç';
+
+        const btns = document.getElementById('pagingBtns');
+        btns.innerHTML = '';
+        const prev = makePageBtn('<i class="fa-solid fa-chevron-left" style="font-size:11px;"></i>', () => goPage(currentPage-1));
+        if (currentPage===1) prev.disabled = true;
+        btns.appendChild(prev);
+        for (let p=1; p<=pages; p++) {
+            const btn = makePageBtn(p, () => goPage(p));
+            if (p===currentPage) btn.classList.add('active');
+            btns.appendChild(btn);
+        }
+        const next = makePageBtn('<i class="fa-solid fa-chevron-right" style="font-size:11px;"></i>', () => goPage(currentPage+1));
+        if (currentPage===pages) next.disabled = true;
+        btns.appendChild(next);
+        document.getElementById('pagingWrap').style.display = total <= PAGE_SIZE && pages===1 ? 'none' : 'flex';
+    }
+
+    function makePageBtn(html, fn) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'page-btn'; b.innerHTML = html;
+        b.addEventListener('click', fn); return b;
+    }
+
+    function goPage(p) {
+        const filtered = (currentView==='grid'
+            ? [...document.querySelectorAll('#carsGrid .car-card')]
+            : [...document.querySelectorAll('#carsList .car-list-item')]
+        ).filter(c => c.getAttribute('data-show') === '1');
+        const pages = Math.max(1, Math.ceil(filtered.length/PAGE_SIZE));
+        currentPage = Math.max(1, Math.min(pages, p));
+        buildPaging();
+    }
+
+    function openDeleteModal(id, plate) {
+        document.getElementById('deleteCarPlate').textContent = `"${plate}"`;
+        document.getElementById('deleteCarId').value = id;
+        document.getElementById('deleteForm').action = `/Car/Delete/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success:'fa-check-circle', info:'fa-circle-info', danger:'fa-triangle-exclamation' };
+        const colors = { success:'#10b981', info:'var(--accent)', danger:'#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        applyFilters();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+

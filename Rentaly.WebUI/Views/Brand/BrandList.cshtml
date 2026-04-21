@@ -1,0 +1,767 @@
+﻿
+@{
+    ViewData["Title"] = "BrandList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+@model List<Rentaly.EntityLayer.Entities.Brand>
+
+@section Styles {
+    <style>
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Stats */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .s-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .s-card.indigo::before {
+                background: var(--accent);
+            }
+
+            .s-card.emerald::before {
+                background: var(--emerald);
+            }
+
+            .s-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .s-card:hover::before {
+                    opacity: 1;
+                }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .s-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .s-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .sw {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+            .sw i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .s-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .s-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .s-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: 1.5px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            transition: all var(--t-s);
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--accent-lighter);
+                border-color: #c7d2fe;
+                color: var(--accent);
+            }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-add:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        /* ══ LOGO GRID — eşit boyut ══ */
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .brand-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all var(--t);
+            cursor: default;
+            animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+            .brand-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-4px);
+                border-color: #c7d2fe;
+            }
+
+        /* Logo alanı — tüm kartlarda AYNI yükseklik */
+        .brand-logo-wrap {
+            width: 100%;
+            height: 110px; /* sabit yükseklik */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, #f8f9ff 100%);
+            padding: 16px;
+            box-sizing: border-box;
+            border-bottom: 1px solid var(--card-border);
+            transition: background var(--t-s);
+        }
+
+        .brand-card:hover .brand-logo-wrap {
+            background: linear-gradient(135deg,#e0e7ff 0%,#eef2ff 100%);
+        }
+
+        .brand-logo-wrap img {
+            max-width: 90px; /* maksimum genişlik */
+            max-height: 70px; /* maksimum yükseklik */
+            width: auto;
+            height: auto;
+            object-fit: contain; /* oranı koru */
+            display: block;
+            transition: transform var(--t-s);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+        }
+
+        .brand-card:hover .brand-logo-wrap img {
+            transform: scale(1.08);
+        }
+
+        .brand-logo-ph {
+            font-size: 36px;
+            color: var(--accent);
+            opacity: 0.2;
+            transition: opacity var(--t-s);
+        }
+
+        .brand-card:hover .brand-logo-ph {
+            opacity: 0.35;
+        }
+
+        /* Alt bilgi */
+        .brand-info {
+            width: 100%;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .brand-name {
+            font-family: var(--font-display);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .brand-id-badge {
+            display: inline-flex;
+            background: var(--accent-lighter);
+            color: var(--accent-text);
+            border: 1px solid #c7d2fe;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 99px;
+            font-family: var(--font-display);
+            flex-shrink: 0;
+        }
+
+        /* Aksiyon butonları */
+        .brand-actions {
+            width: 100%;
+            padding: 8px 10px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            gap: 6px;
+        }
+
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            flex: none;
+            padding: 6px 10px;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* Animasyon sıralı */
+        .brand-card:nth-child(1) {
+            animation-delay: 0.03s;
+        }
+
+        .brand-card:nth-child(2) {
+            animation-delay: 0.06s;
+        }
+
+        .brand-card:nth-child(3) {
+            animation-delay: 0.09s;
+        }
+
+        .brand-card:nth-child(4) {
+            animation-delay: 0.12s;
+        }
+
+        .brand-card:nth-child(5) {
+            animation-delay: 0.15s;
+        }
+
+        .brand-card:nth-child(6) {
+            animation-delay: 0.18s;
+        }
+
+        .brand-card:nth-child(7) {
+            animation-delay: 0.21s;
+        }
+
+        .brand-card:nth-child(8) {
+            animation-delay: 0.24s;
+        }
+
+        .brand-card:nth-child(9) {
+            animation-delay: 0.27s;
+        }
+
+        .brand-card:nth-child(10) {
+            animation-delay: 0.30s;
+        }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Empty */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        /* Delete Modal */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+            background: #fafbff;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width:640px) {
+            .brand-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Araç Markaları</h1>
+        <p class="page-desc">Sistemdeki tüm araç markalarını yönetin.</p>
+    </div>
+    <a href="/Brand/CreateBrand" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Yeni Marka
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="stat-row">
+    <div class="s-card indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-copyright"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Marka</div>
+        </div>
+    </div>
+    <div class="s-card emerald">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;" id="statVisible">
+                @Model.Count(b => !string.IsNullOrEmpty(b.ImageUrl))
+            </div>
+            <div class="s-lbl">Logolu Marka</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="sw">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="brandSearch"
+               placeholder="Marka ara…" oninput="filterBrands()" />
+    </div>
+    <button class="btn-reset" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- Brand Grid -->
+<div class="brand-grid" id="brandGrid">
+    @foreach (var b in Model)
+    {
+        <div class="brand-card"
+             data-id="@b.BrandId"
+             data-name="@b.BrandName?.ToLower()">
+
+            <!-- Logo — sabit yükseklikte, eşit boyut -->
+            <div class="brand-logo-wrap">
+                @if (!string.IsNullOrEmpty(b.ImageUrl))
+                {
+                    <img src="@b.ImageUrl" alt="@b.BrandName"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                    <span class="brand-logo-ph" style="display:none;">
+                        <i class="fa-solid fa-copyright"></i>
+                    </span>
+                }
+                else
+                {
+                    <span class="brand-logo-ph"><i class="fa-solid fa-copyright"></i></span>
+                }
+            </div>
+
+            <!-- İsim + ID -->
+            <div class="brand-info">
+                <span class="brand-name" title="@b.BrandName">@b.BrandName</span>
+                <span class="brand-id-badge">#@b.BrandId</span>
+            </div>
+
+            <!-- Aksiyonlar -->
+            <div class="brand-actions">
+                <a href="/Brand/UpdateBrand/@b.BrandId" class="tbl-btn tbl-btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                </a>
+                <button class="tbl-btn tbl-btn-delete"
+                        onclick="openDeleteModal(@b.BrandId, '@b.BrandName')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-copyright"></i></div>
+    <div class="empty-title">Marka Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Arama kriterinizle eşleşen marka yok.</p>
+    <button class="btn-add" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Markayı Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:22px;">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteBrandName">bu markayı</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">Bu işlem geri alınamaz. Bu markaya ait araçlar etkilenebilir.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteBrandId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    function filterBrands() {
+        const q     = document.getElementById('brandSearch').value.toLowerCase().trim();
+        const cards = [...document.querySelectorAll('#brandGrid .brand-card')];
+        let visible = 0;
+        cards.forEach(c => {
+            const show = !q || (c.dataset.name||'').includes(q) || c.dataset.id.includes(q);
+            c.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('brandSearch').value = '';
+        filterBrands();
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById('deleteBrandName').textContent = `"${name}"`;
+        document.getElementById('deleteBrandId').value = id;
+        document.getElementById('deleteForm').action = `/Brand/DeleteBrand/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success:'fa-check-circle', danger:'fa-triangle-exclamation' };
+        const colors = { success:'#10b981', danger:'#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]}" style="font-size:16px;color:${colors[type]};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+
+

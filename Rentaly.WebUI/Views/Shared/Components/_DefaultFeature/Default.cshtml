@@ -1,0 +1,48 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Feature>
+@{ 
+    var leftItems = Model.Take(2).ToList();
+    var rightItems = Model.Skip(2).Take(2).ToList();
+}
+
+<section aria-label="section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 offset-lg-3 text-center">
+                <h2>Neden Bizi Tercih Etmelisiniz?</h2>
+                <p>Konforlu, güvenli ve ekonomik araç kiralama deneyimi için size özel hizmetler sunuyoruz.</p>
+                <div class="spacer-20"></div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-3">
+                @foreach (var item in leftItems)
+                {
+                    <div class="box-icon s2 p-small mb20 wow fadeInL fadeInRight" data-wow-delay=".75s">
+                        <i class="@item.IconUrl"></i>
+                        <div class="d-inner">
+                            <h4>@item.Title</h4>
+                            @item.Description
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="col-lg-6">
+                <img src="/RentalyTema/images/misc/car.png" alt="" class="img-fluid wow fadeInUp">
+            </div>
+            <div class="col-lg-3">
+                @foreach (var item in rightItems)
+                {
+                    <div class="box-icon s2 d-invert p-small mb20 wow fadeInL fadeInLeft" data-wow-delay="1s">
+                        <i class="@item.IconUrl"></i>
+                        <div class="d-inner">
+                            <h4>@item.Title</h4>
+                            @item.Description
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+

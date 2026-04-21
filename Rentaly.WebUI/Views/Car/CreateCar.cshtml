@@ -1,0 +1,1607 @@
+﻿@model Rentaly.EntityLayer.Entities.Car
+
+@{
+    ViewData["Title"] = "Yeni Araç Ekle";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    // Controller'dan ViewBag.Categories = new SelectList(categories, "CategoryId", "CategoryName")
+}
+
+
+@section Styles {
+    <style>
+            /* ══════════════════════════════════════════
+           CAR CREATE — Indigo Daylight · Multi-Step
+        ══════════════════════════════════════════ */
+
+            .create-car-layout {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+                align-items: start;
+            }
+
+            .page-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .page-title {
+                font-family: var(--font-display);
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+
+            .page-desc {
+                font-size: 13.5px;
+                color: var(--text-muted);
+                margin-top: 3px;
+            }
+
+            /* ── Progress Bar ── */
+            .progress-wrap {
+                margin-bottom: 22px;
+            }
+
+            .progress-bar-bg {
+                height: 4px;
+                background: var(--card-border);
+                border-radius: 99px;
+                overflow: hidden;
+            }
+
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg,var(--accent) 0%,#818cf8 100%);
+                border-radius: 99px;
+                transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+            }
+
+            .progress-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 8px;
+            }
+
+            .progress-label {
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--accent);
+                font-family: var(--font-display);
+            }
+
+            .progress-pct {
+                font-size: 12px;
+                color: var(--text-muted);
+            }
+
+            /* ── Step Tabs ── */
+            .step-tabs {
+                display: grid;
+                grid-template-columns: repeat(3,1fr);
+                gap: 10px;
+                margin-bottom: 22px;
+            }
+
+            .step-tab {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 16px;
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                cursor: pointer;
+                transition: all var(--t);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .step-tab::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: var(--accent);
+                    opacity: 0;
+                    transition: opacity var(--t);
+                    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                }
+
+                .step-tab:hover {
+                    border-color: #c7d2fe;
+                    box-shadow: var(--card-shadow-hover);
+                }
+
+                    .step-tab:hover::before {
+                        opacity: 0.4;
+                    }
+
+                .step-tab.active {
+                    border-color: var(--accent);
+                    background: var(--accent-lighter);
+                }
+
+                    .step-tab.active::before {
+                        opacity: 1;
+                    }
+
+                .step-tab.done {
+                    border-color: var(--emerald);
+                    background: #f0fdf4;
+                }
+
+                    .step-tab.done::before {
+                        background: var(--emerald);
+                        opacity: 1;
+                    }
+
+            .step-bubble {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: var(--font-display);
+                font-size: 13px;
+                font-weight: 800;
+                flex-shrink: 0;
+                transition: all var(--t);
+                background: var(--page-bg);
+                color: var(--text-muted);
+                border: 2px solid var(--card-border);
+            }
+
+            .step-tab.active .step-bubble {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+                box-shadow: 0 2px 8px rgba(79,70,229,0.30);
+            }
+
+            .step-tab.done .step-bubble {
+                background: var(--emerald);
+                color: #fff;
+                border-color: var(--emerald);
+            }
+
+            .step-info {
+                min-width: 0;
+            }
+
+            .step-name {
+                font-family: var(--font-display);
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-primary);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .step-sub {
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: 2px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .step-tab.active .step-name {
+                color: var(--accent-text);
+            }
+
+            .step-tab.done .step-name {
+                color: var(--emerald-text);
+            }
+
+            /* ── Section Cards ── */
+            .form-section {
+                display: none;
+            }
+
+                .form-section.active {
+                    display: block;
+                }
+
+            .form-card {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+                margin-bottom: 16px;
+            }
+
+            .form-card-header {
+                padding: 18px 22px;
+                border-bottom: 1px solid var(--card-border);
+                display: flex;
+                align-items: center;
+                gap: 13px;
+            }
+
+            .section-icon {
+                width: 42px;
+                height: 42px;
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 17px;
+                flex-shrink: 0;
+            }
+
+            .form-card-title {
+                font-family: var(--font-display);
+                font-size: 14.5px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .form-card-subtitle {
+                font-size: 12px;
+                color: var(--text-muted);
+                margin-top: 2px;
+            }
+
+            .form-card-body {
+                padding: 22px;
+            }
+
+            /* ── Form Elements ── */
+            .f-grid-2 {
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+                gap: 18px 20px;
+            }
+
+            .f-grid-3 {
+                display: grid;
+                grid-template-columns: repeat(3,1fr);
+                gap: 18px 20px;
+            }
+
+            .span-2 {
+                grid-column: span 2;
+            }
+
+            .span-3 {
+                grid-column: span 3;
+            }
+
+            .f-group {
+                display: flex;
+                flex-direction: column;
+                gap: 7px;
+            }
+
+            .f-label {
+                font-family: var(--font-display);
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+                .f-label i {
+                    font-size: 11px;
+                    color: var(--accent);
+                }
+
+            .req {
+                color: var(--rose);
+                font-size: 13px;
+                line-height: 1;
+            }
+
+            .f-hint {
+                font-size: 11.5px;
+                color: var(--text-muted);
+            }
+
+            .f-input {
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                padding: 10px 14px;
+                font-size: 13.5px;
+                font-family: var(--font-body);
+                color: var(--text-primary);
+                background: var(--page-bg);
+                outline: none;
+                transition: all var(--t-s);
+                width: 100%;
+            }
+
+                .f-input:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+                .f-input::placeholder {
+                    color: var(--text-muted);
+                }
+
+                .f-input.input-validation-error {
+                    border-color: var(--rose);
+                }
+
+            select.f-input {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 14px center;
+                padding-right: 36px;
+                cursor: pointer;
+            }
+
+            /* Fiyat input ₺ simgesi */
+            .price-wrap {
+                position: relative;
+            }
+
+                .price-wrap .f-input {
+                    padding-right: 42px;
+                }
+
+            .price-suffix {
+                position: absolute;
+                right: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 14px;
+                font-weight: 800;
+                color: var(--accent);
+                pointer-events: none;
+            }
+
+            /* Plaka özel */
+            .plate-input {
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                font-size: 15px;
+            }
+
+            .field-error {
+                font-size: 12px;
+                color: var(--rose);
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            /* ── Toggle Switch ── */
+            .toggle-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 14px;
+                padding: 14px 16px;
+                background: var(--page-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                cursor: pointer;
+                transition: all var(--t-s);
+            }
+
+                .toggle-card:hover {
+                    border-color: #c7d2fe;
+                    background: var(--accent-lighter);
+                }
+
+            .toggle-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .toggle-ico {
+                width: 38px;
+                height: 38px;
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+
+            .toggle-name {
+                font-family: var(--font-display);
+                font-size: 13.5px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .toggle-desc {
+                font-size: 11.5px;
+                color: var(--text-muted);
+                margin-top: 2px;
+            }
+
+            .sw {
+                position: relative;
+                width: 46px;
+                height: 26px;
+                flex-shrink: 0;
+            }
+
+                .sw input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+
+                .sw .sl {
+                    position: absolute;
+                    inset: 0;
+                    background: var(--card-border);
+                    border-radius: 26px;
+                    transition: all var(--t);
+                    cursor: pointer;
+                }
+
+                    .sw .sl::before {
+                        content: '';
+                        position: absolute;
+                        width: 20px;
+                        height: 20px;
+                        left: 3px;
+                        top: 3px;
+                        background: #fff;
+                        border-radius: 50%;
+                        transition: all var(--t);
+                        box-shadow: 0 1px 3px rgba(0,0,0,.2);
+                    }
+
+                .sw input:checked + .sl {
+                    background: var(--accent);
+                }
+
+                    .sw input:checked + .sl::before {
+                        transform: translateX(20px);
+                    }
+
+            /* ── Görsel URL alanı ── */
+            .img-url-row {
+                display: flex;
+                gap: 8px;
+            }
+
+                .img-url-row .f-input {
+                    flex: 1;
+                }
+
+            .btn-test-img {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 10px 14px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--accent-lighter);
+                color: var(--accent);
+                border: 1.5px solid #c7d2fe;
+                cursor: pointer;
+                transition: all var(--t-s);
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+                .btn-test-img:hover {
+                    background: var(--accent);
+                    color: #fff;
+                    border-color: var(--accent);
+                }
+
+            .img-preview-box {
+                display: none;
+                margin-top: 10px;
+                border-radius: var(--radius);
+                overflow: hidden;
+                border: 1.5px solid var(--card-border);
+                position: relative;
+            }
+
+                .img-preview-box img {
+                    width: 100%;
+                    height: 160px;
+                    object-fit: cover;
+                    display: block;
+                }
+
+            .img-remove {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 30px;
+                height: 30px;
+                background: rgba(0,0,0,0.55);
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                backdrop-filter: blur(4px);
+                transition: background var(--t-s);
+            }
+
+                .img-remove:hover {
+                    background: var(--rose);
+                }
+
+            /* ── Action Bar ── */
+            .action-bar {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow: var(--card-shadow);
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 4px;
+            }
+
+            .btn-prev {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 10px 18px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                border: 1.5px solid var(--card-border);
+                cursor: pointer;
+                transition: all var(--t-s);
+            }
+
+                .btn-prev:hover {
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                    background: var(--accent-lighter);
+                }
+
+            .btn-cancel-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 10px 16px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                color: var(--text-secondary);
+                text-decoration: none;
+                border: 1.5px solid var(--card-border);
+                background: var(--card-bg);
+                transition: all var(--t-s);
+            }
+
+                .btn-cancel-link:hover {
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                    background: var(--accent-lighter);
+                }
+
+            .btn-next {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 22px;
+                border-radius: var(--radius-sm);
+                font-size: 13.5px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            }
+
+                .btn-next:hover {
+                    background: var(--accent-hover);
+                    box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                    transform: translateY(-1px);
+                }
+
+            .btn-submit {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 26px;
+                border-radius: var(--radius-sm);
+                font-size: 13.5px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                background: var(--emerald);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(16,185,129,0.30);
+            }
+
+                .btn-submit:hover {
+                    background: #059669;
+                    box-shadow: 0 4px 16px rgba(16,185,129,0.40);
+                    transform: translateY(-1px);
+                }
+
+                .btn-submit:disabled {
+                    opacity: 0.7;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+
+            /* ── Right Panel: Canlı Önizleme ── */
+            .preview-panel {
+                position: sticky;
+                top: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .preview-card {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+                transition: all var(--t);
+            }
+
+                .preview-card.has-data {
+                    border-color: #c7d2fe;
+                }
+
+            .preview-card-stripe {
+                height: 4px;
+                background: linear-gradient(90deg,var(--accent) 0%,#818cf8 100%);
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .preview-card.has-data .preview-card-stripe {
+                opacity: 1;
+            }
+
+            .preview-img-box {
+                height: 155px;
+                position: relative;
+                background: linear-gradient(135deg,var(--accent-lighter) 0%,#eef2ff 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+                .preview-img-box img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+            .preview-img-ph {
+                font-size: 60px;
+                color: var(--accent);
+                opacity: 0.18;
+            }
+
+            .preview-img-box::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 50px;
+                background: linear-gradient(transparent,rgba(30,27,75,0.15));
+            }
+
+            .preview-status {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 4px 10px;
+                border-radius: 99px;
+                font-size: 11px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                backdrop-filter: blur(6px);
+                z-index: 1;
+            }
+
+            .preview-year-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(15,17,27,0.60);
+                color: #fff;
+                padding: 4px 10px;
+                border-radius: 99px;
+                font-size: 11px;
+                font-weight: 700;
+                font-family: var(--font-display);
+                backdrop-filter: blur(6px);
+            }
+
+            .preview-body {
+                padding: 14px 16px;
+            }
+
+            .preview-plate {
+                display: inline-block;
+                background: var(--page-bg);
+                border: 1.5px solid var(--card-border);
+                font-family: var(--font-display);
+                font-size: 11px;
+                font-weight: 800;
+                padding: 3px 9px;
+                border-radius: var(--radius-xs);
+                letter-spacing: 1.5px;
+                margin-bottom: 8px;
+            }
+
+            .preview-title {
+                font-family: var(--font-display);
+                font-size: 14.5px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 10px;
+                line-height: 1.3;
+            }
+
+                .preview-title.ph {
+                    color: var(--text-muted);
+                    font-style: italic;
+                    font-weight: 400;
+                    font-size: 13px;
+                }
+
+            .preview-chips {
+                display: flex;
+                gap: 5px;
+                flex-wrap: wrap;
+                margin-bottom: 12px;
+            }
+
+            .p-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                background: var(--page-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: 99px;
+                padding: 3px 10px;
+                font-size: 11.5px;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+                .p-chip i {
+                    font-size: 10px;
+                    color: var(--accent);
+                }
+
+            .preview-price-val {
+                font-family: var(--font-display);
+                font-size: 22px;
+                font-weight: 800;
+                color: var(--accent);
+            }
+
+            .preview-price-lbl {
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: 1px;
+            }
+
+            /* Step helper card */
+            .step-helper {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+            }
+
+            .step-helper-header {
+                padding: 12px 16px;
+                border-bottom: 1px solid var(--card-border);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: #fafbff;
+            }
+
+                .step-helper-header i {
+                    font-size: 13px;
+                    color: var(--accent);
+                }
+
+            .step-helper-title {
+                font-family: var(--font-display);
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .step-helper-body {
+                padding: 14px 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .helper-item {
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+            }
+
+            .helper-dot {
+                width: 22px;
+                height: 22px;
+                border-radius: var(--radius-xs);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+
+                .helper-dot.blue {
+                    background: var(--accent-lighter);
+                    color: var(--accent);
+                }
+
+                .helper-dot.green {
+                    background: #d1fae5;
+                    color: #059669;
+                }
+
+                .helper-dot.amber {
+                    background: #fef3c7;
+                    color: #d97706;
+                }
+
+            .helper-text {
+                font-size: 12px;
+                color: var(--text-muted);
+                line-height: 1.5;
+            }
+
+                .helper-text strong {
+                    color: var(--text-secondary);
+                    font-weight: 700;
+                }
+
+            .required-note {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius);
+                padding: 11px 14px;
+                font-size: 12px;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 7px;
+            }
+
+            .required-dot {
+                width: 6px;
+                height: 6px;
+                background: var(--rose);
+                border-radius: 50%;
+                display: inline-block;
+                flex-shrink: 0;
+            }
+
+            @@media (max-width:1100px) {
+                .create-car-layout {
+                    grid-template-columns: 1fr;
+                }
+
+                .preview-panel {
+                    position: static;
+                }
+            }
+
+            @@media (max-width:768px) {
+                .f-grid-2 {
+                    grid-template-columns: 1fr;
+                }
+
+                .f-grid-3 {
+                    grid-template-columns: 1fr 1fr;
+                }
+
+                .span-2, .span-3 {
+                    grid-column: span 1;
+                }
+
+                .step-tabs {
+                    grid-template-columns: 1fr;
+                    gap: 8px;
+                }
+            }
+
+            @@media (max-width:480px) {
+                .f-grid-3 {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Yeni Araç Ekle</h1>
+        <p class="page-desc">Araç envanterine adım adım yeni bir kayıt oluşturun.</p>
+    </div>
+    <a href="/Car/CarList" class="btn-cancel-link">
+        <i class="fa-solid fa-arrow-left"></i> Araç Listesi
+    </a>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-wrap">
+    <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:33%;"></div>
+    </div>
+    <div class="progress-meta">
+        <span class="progress-label" id="progressLabel">Adım 1 / 3 — Temel Bilgiler</span>
+        <span class="progress-pct" id="progressPct">33%</span>
+    </div>
+</div>
+
+<!-- Step Tabs -->
+<div class="step-tabs">
+    <div class="step-tab active" id="stab-1" onclick="goStep(1)">
+        <div class="step-bubble" id="sbub-1">1</div>
+        <div class="step-info">
+            <div class="step-name">Temel Bilgiler</div>
+            <div class="step-sub">Plaka, VIN, Kategori</div>
+        </div>
+    </div>
+    <div class="step-tab" id="stab-2" onclick="goStep(2)">
+        <div class="step-bubble" id="sbub-2">2</div>
+        <div class="step-info">
+            <div class="step-name">Araç Detayları</div>
+            <div class="step-sub">Yıl, KM, Yakıt, Koltuk</div>
+        </div>
+    </div>
+    <div class="step-tab" id="stab-3" onclick="goStep(3)">
+        <div class="step-bubble" id="sbub-3">3</div>
+        <div class="step-info">
+            <div class="step-name">Fiyat & Durum</div>
+            <div class="step-sub">Ücret, Depozito, Aktiflik</div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Layout -->
+<div class="create-car-layout">
+
+    <!-- ════ Sol: Form ════ -->
+    <div>
+        <form asp-action="CreateCar" asp-controller="Car" method="post" id="carForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <!-- ══ ADIM 1: Temel Bilgiler ══ -->
+            <div class="form-section active" id="sec-1">
+
+                <!-- Kimlik Bilgileri -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:var(--accent-lighter);color:var(--accent);">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Kimlik Bilgileri</div>
+                            <div class="form-card-subtitle">Aracın plakası ve şasi numarası</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="f-grid-2">
+                            <div class="f-group">
+                                <label asp-for="PlateNumber" class="f-label">
+                                    <i class="fa-solid fa-rectangle-list"></i> Plaka <span class="req">*</span>
+                                </label>
+                                <input asp-for="PlateNumber" class="f-input plate-input"
+                                       placeholder="34 ABC 123" maxlength="15"
+                                       oninput="this.value=this.value.toUpperCase(); updatePreview()" />
+                                <span asp-validation-for="PlateNumber" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="VIN" class="f-label">
+                                    <i class="fa-solid fa-barcode"></i> Şasi No (VIN)
+                                </label>
+                                <input asp-for="VIN" class="f-input"
+                                       placeholder="WVWZZZ1JZ3W000001" maxlength="17"
+                                       oninput="this.value=this.value.toUpperCase()" />
+                                <span asp-validation-for="VIN" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                                <span class="f-hint"><i class="fa-solid fa-circle-info" style="color:var(--accent);font-size:10px;"></i> 17 karakterli araç kimlik numarası</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sınıflandırma -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:#fef3c7;color:#d97706;">
+                            <i class="fa-solid fa-tags"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Sınıflandırma</div>
+                            <div class="form-card-subtitle">Marka, model, kategori ve şube bilgileri</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="f-grid-2">
+                            <div class="f-group">
+                                <label asp-for="BrandId" class="f-label">
+                                    <i class="fa-solid fa-copyright"></i> Marka <span class="req">*</span>
+                                </label>
+                                <select asp-for="BrandId" asp-items="ViewBag.Brands" class="f-input" onchange="updatePreview()">
+                                    <option value="">— Marka Seçin —</option>
+                                </select>
+                                <span asp-validation-for="BrandId" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="CarModelId" class="f-label">
+                                    <i class="fa-solid fa-car"></i> Model <span class="req">*</span>
+                                </label>
+                                <select asp-for="CarModelId" asp-items="ViewBag.Models" class="f-input" onchange="updatePreview()">
+                                    <option value="">— Model Seçin —</option>
+                                </select>
+                                <span asp-validation-for="CarModelId" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="CategoryId" class="f-label">
+                                    <i class="fa-solid fa-layer-group"></i> Kategori <span class="req">*</span>
+                                </label>
+                                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="f-input" onchange="updatePreview()">
+                                    <option value="">— Kategori Seçin —</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="BranchId" class="f-label">
+                                    <i class="fa-solid fa-building"></i> Şube <span class="req">*</span>
+                                </label>
+                                <select asp-for="BranchId" asp-items="ViewBag.Branches" class="f-input">
+                                    <option value="">— Şube Seçin —</option>
+                                </select>
+                                <span asp-validation-for="BranchId" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ ADIM 2: Araç Detayları ══ -->
+            <div class="form-section" id="sec-2">
+
+                <!-- Teknik Özellikler -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:#fff1f2;color:#e11d48;">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Teknik Özellikler</div>
+                            <div class="form-card-subtitle">Yıl, kilometre, yakıt ve koltuk bilgileri</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="f-grid-3">
+                            <div class="f-group">
+                                <label asp-for="Year" class="f-label">
+                                    <i class="fa-solid fa-calendar"></i> Model Yılı <span class="req">*</span>
+                                </label>
+                                <input asp-for="Year" type="number" class="f-input"
+                                       placeholder="2024" min="1990" max="2030"
+                                       oninput="updatePreview()" />
+                                <span asp-validation-for="Year" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="Kilometer" class="f-label">
+                                    <i class="fa-solid fa-gauge-high"></i> Kilometre <span class="req">*</span>
+                                </label>
+                                <input asp-for="Kilometer" type="number" class="f-input"
+                                       placeholder="0" min="0"
+                                       oninput="updatePreview()" />
+                                <span asp-validation-for="Kilometer" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="FuelType" class="f-label">
+                                    <i class="fa-solid fa-gas-pump"></i> Yakıt Tipi <span class="req">*</span>
+                                </label>
+                                <select asp-for="FuelType" class="f-input" onchange="updatePreview()">
+                                    <option value="">— Seçin —</option>
+                                    <option value="Benzin">⛽ Benzin</option>
+                                    <option value="Dizel">🔧 Dizel</option>
+                                    <option value="Elektrik">⚡ Elektrik</option>
+                                    <option value="Hibrit">🌿 Hibrit</option>
+                                    <option value="LPG">🔥 LPG</option>
+                                </select>
+                                <span asp-validation-for="FuelType" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="SeatCount" class="f-label">
+                                    <i class="fa-solid fa-user-group"></i> Koltuk Sayısı <span class="req">*</span>
+                                </label>
+                                <input asp-for="SeatCount" type="number" class="f-input"
+                                       placeholder="5" min="1" max="20"
+                                       oninput="updatePreview()" />
+                                <span asp-validation-for="SeatCount" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="LuggageCount" class="f-label">
+                                    <i class="fa-solid fa-suitcase-rolling"></i> Bavul Kapasitesi <span class="req">*</span>
+                                </label>
+                                <input asp-for="LuggageCount" type="number" class="f-input"
+                                       placeholder="2" min="0" max="10"
+                                       oninput="updatePreview()" />
+                                <span asp-validation-for="LuggageCount" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Görsel -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:#d1fae5;color:#059669;">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Araç Görseli</div>
+                            <div class="form-card-subtitle">İsteğe bağlı — doğrudan görsel URL'si</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="f-group">
+                            <label asp-for="ImageUrl" class="f-label">
+                                <i class="fa-solid fa-link"></i> Görsel URL
+                            </label>
+                            <div class="img-url-row">
+                                <input asp-for="ImageUrl" type="url" class="f-input"
+                                       placeholder="https://example.com/car.jpg"
+                                       oninput="updatePreview()" />
+                                <button type="button" class="btn-test-img" onclick="testImage()">
+                                    <i class="fa-solid fa-eye"></i> Test
+                                </button>
+                            </div>
+                            <span class="f-hint"><i class="fa-solid fa-circle-info" style="color:var(--accent);font-size:10px;"></i> JPG, PNG veya WEBP formatı desteklenir</span>
+                            <div class="img-preview-box" id="imgPreviewBox">
+                                <img id="imgPreviewEl" src="" alt="Araç Görseli" />
+                                <button type="button" class="img-remove" onclick="clearImage()">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ ADIM 3: Fiyat & Durum ══ -->
+            <div class="form-section" id="sec-3">
+
+                <!-- Fiyatlandırma -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:#d1fae5;color:#059669;">
+                            <i class="fa-solid fa-turkish-lira-sign"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Fiyatlandırma</div>
+                            <div class="form-card-subtitle">Günlük kiralama ücreti ve depozito</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        <div class="f-grid-2">
+                            <div class="f-group">
+                                <label asp-for="DailyPrice" class="f-label">
+                                    <i class="fa-solid fa-turkish-lira-sign"></i> Günlük Fiyat <span class="req">*</span>
+                                </label>
+                                <div class="price-wrap">
+                                    <input asp-for="DailyPrice" type="number" step="0.01" class="f-input"
+                                           placeholder="0.00" min="0"
+                                           oninput="updatePreview()" />
+                                    <span class="price-suffix">₺</span>
+                                </div>
+                                <span asp-validation-for="DailyPrice" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                            <div class="f-group">
+                                <label asp-for="DepositAmount" class="f-label">
+                                    <i class="fa-solid fa-shield-halved"></i> Depozito <span class="req">*</span>
+                                </label>
+                                <div class="price-wrap">
+                                    <input asp-for="DepositAmount" type="number" step="0.01" class="f-input"
+                                           placeholder="0.00" min="0" />
+                                    <span class="price-suffix">₺</span>
+                                </div>
+                                <span asp-validation-for="DepositAmount" class="field-error">@*<i class="fa-solid fa-circle-exclamation"></i>*@</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Durum -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="section-icon" style="background:var(--accent-lighter);color:var(--accent);">
+                            <i class="fa-solid fa-toggle-on"></i>
+                        </div>
+                        <div>
+                            <div class="form-card-title">Araç Durumu</div>
+                            <div class="form-card-subtitle">Müsaitlik ve yayın durumu ayarları</div>
+                        </div>
+                    </div>
+                    <div class="form-card-body" style="display:flex;flex-direction:column;gap:12px;">
+
+                        <label class="toggle-card" for="IsAvailable">
+                            <div class="toggle-info">
+                                <div class="toggle-ico" style="background:#d1fae5;color:#059669;">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div>
+                                    <div class="toggle-name">Araç Müsait</div>
+                                    <div class="toggle-desc">Araç kiralamaya hazır ve müsait mi?</div>
+                                </div>
+                            </div>
+                            <label class="sw">
+                                <input asp-for="IsAvailable" type="checkbox" />
+                                <span class="sl"></span>
+                            </label>
+                        </label>
+
+                        <label class="toggle-card" for="IsActive">
+                            <div class="toggle-info">
+                                <div class="toggle-ico" style="background:var(--accent-lighter);color:var(--accent);">
+                                    <i class="fa-solid fa-power-off"></i>
+                                </div>
+                                <div>
+                                    <div class="toggle-name">Araç Aktif</div>
+                                    <div class="toggle-desc">Araç sistemde aktif olarak görünecek mi?</div>
+                                </div>
+                            </div>
+                            <label class="sw">
+                                <input asp-for="IsActive" type="checkbox" checked />
+                                <span class="sl"></span>
+                            </label>
+                        </label>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══ Action Bar ══ -->
+            <div class="action-bar">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button type="button" class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none;">
+                        <i class="fa-solid fa-chevron-left"></i> Geri
+                    </button>
+                    <a href="/Car/CarList" class="btn-cancel-link">
+                        <i class="fa-solid fa-xmark"></i> Vazgeç
+                    </a>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span id="stepMeta" style="font-size:12.5px;color:var(--text-muted);font-family:var(--font-display);">Adım 1 / 3</span>
+                    <button type="button" class="btn-next" id="btnNext" onclick="nextStep()">
+                        Devam <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button type="submit" class="btn-submit" id="btnSubmit" style="display:none;">
+                        <i class="fa-solid fa-check"></i> Aracı Kaydet
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- ════ Sağ: Önizleme ════ -->
+    <div class="preview-panel">
+
+        <!-- Canlı Araç Kartı -->
+        <div class="preview-card" id="previewCard">
+            <div class="preview-card-stripe"></div>
+            <div class="preview-img-box" id="previewImgBox">
+                <div class="preview-img-ph" id="previewImgPh"><i class="fa-solid fa-car-side"></i></div>
+                <img id="previewImgEl" src="" alt="" style="display:none;" onerror="imgError()" />
+                <span class="preview-status" id="previewStatus" style="background:rgba(16,185,129,0.85);color:#fff;">
+                    <i class="fa-solid fa-circle-check"></i> Müsait
+                </span>
+                <span class="preview-year-badge" id="previewYear">—</span>
+            </div>
+            <div class="preview-body">
+                <div class="preview-plate" id="previewPlate">— — —</div>
+                <div class="preview-title ph" id="previewTitle">Araç bilgileri girilmedi…</div>
+                <div class="preview-chips">
+                    <span class="p-chip"><i class="fa-solid fa-gauge-high"></i><span id="pc-km">—</span> km</span>
+                    <span class="p-chip"><i class="fa-solid fa-gas-pump"></i><span id="pc-fuel">—</span></span>
+                    <span class="p-chip"><i class="fa-solid fa-user-group"></i><span id="pc-seat">—</span> kişi</span>
+                    <span class="p-chip"><i class="fa-solid fa-suitcase-rolling"></i><span id="pc-bag">—</span> bavul</span>
+                </div>
+                <div class="preview-price-val" id="previewPrice">— ₺</div>
+                <div class="preview-price-lbl">/ günlük kiralama</div>
+            </div>
+        </div>
+
+        <!-- Adım İpuçları -->
+        <div class="step-helper" id="stepHelper">
+            <div class="step-helper-header">
+                <i class="fa-solid fa-lightbulb"></i>
+                <div class="step-helper-title" id="helperTitle">Adım 1 İpuçları</div>
+            </div>
+            <div class="step-helper-body" id="helperBody">
+                <div class="helper-item">
+                    <div class="helper-dot blue"><i class="fa-solid fa-rectangle-list"></i></div>
+                    <div class="helper-text"><strong>Plaka</strong> Türk plaka formatında girilmeli: "34 ABC 123"</div>
+                </div>
+                <div class="helper-item">
+                    <div class="helper-dot amber"><i class="fa-solid fa-barcode"></i></div>
+                    <div class="helper-text"><strong>VIN</strong> opsiyoneldir. Ruhsat üzerindeki 17 haneli şasi numarasıdır.</div>
+                </div>
+                <div class="helper-item">
+                    <div class="helper-dot green"><i class="fa-solid fa-tags"></i></div>
+                    <div class="helper-text"><strong>Kategori & Şube</strong> seçimi araç filtrelemede kullanılır.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="required-note">
+            <span class="required-dot"></span>
+            işaretli alanlar zorunludur.
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentStep = 1;
+        const STEPS = 3;
+
+        const stepHelpers = {
+            1: {
+                title: 'Adım 1 İpuçları',
+                items: [
+                    ['blue', 'fa-rectangle-list', '<strong>Plaka</strong> büyük harfle, Türk formatında girin: "34 ABC 123"'],
+                    ['amber', 'fa-barcode', '<strong>VIN / Şasi No</strong> opsiyoneldir. Ruhsatta 17 haneli kod.'],
+                    ['green', 'fa-tags', '<strong>Kategori & Şube</strong> araç filtrelemede kullanılır.'],
+                ]
+            },
+            2: {
+                title: 'Adım 2 İpuçları',
+                items: [
+                    ['blue', 'fa-calendar', '<strong>Yıl</strong> modeli doğru girin — filtrelemede gösterilir.'],
+                    ['amber', 'fa-gauge-high', '<strong>Kilometre</strong> mevcut km durumunu yansıtmalı.'],
+                    ['green', 'fa-image', '<strong>Görsel URL</strong> opsiyoneldir. Test butonuyla kontrol edin.'],
+                ]
+            },
+            3: {
+                title: 'Adım 3 İpuçları',
+                items: [
+                    ['blue', 'fa-turkish-lira-sign', '<strong>Günlük Fiyat</strong> müşteri arayüzünde gösterilecek ücrettir.'],
+                    ['amber', 'fa-shield-halved', '<strong>Depozito</strong> rezervasyon sırasında alınacak güvence bedeli.'],
+                    ['green', 'fa-toggle-on', '<strong>Aktif</strong> kapalıysa araç listede görünmez.'],
+                ]
+            }
+        };
+
+        function renderHelper(step) {
+            const h = stepHelpers[step];
+            document.getElementById('helperTitle').textContent = h.title;
+            document.getElementById('helperBody').innerHTML = h.items.map(([cls, ico, txt]) => `
+                <div class="helper-item">
+                    <div class="helper-dot ${cls}"><i class="fa-solid ${ico}"></i></div>
+                    <div class="helper-text">${txt}</div>
+                </div>`).join('');
+        }
+
+        function goStep(step) {
+            if (step < 1 || step > STEPS) return;
+
+            // Eski adım
+            document.getElementById(`sec-${currentStep}`).classList.remove('active');
+            const oldTab = document.getElementById(`stab-${currentStep}`);
+            oldTab.classList.remove('active');
+            if (step > currentStep) {
+                oldTab.classList.add('done');
+                document.getElementById(`sbub-${currentStep}`).innerHTML = '<i class="fa-solid fa-check" style="font-size:10px;"></i>';
+            } else {
+                oldTab.classList.remove('done');
+                document.getElementById(`sbub-${currentStep}`).textContent = currentStep;
+            }
+
+            currentStep = step;
+
+            // Yeni adım
+            document.getElementById(`sec-${currentStep}`).classList.add('active');
+            const newTab = document.getElementById(`stab-${currentStep}`);
+            newTab.classList.add('active');
+            newTab.classList.remove('done');
+            document.getElementById(`sbub-${currentStep}`).textContent = currentStep;
+
+            // Progress
+            const pct = Math.round((currentStep / STEPS) * 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+            document.getElementById('progressPct').textContent = pct + '%';
+            const labels = ['Temel Bilgiler', 'Araç Detayları', 'Fiyat & Durum'];
+            document.getElementById('progressLabel').textContent = `Adım ${currentStep} / ${STEPS} — ${labels[currentStep - 1]}`;
+            document.getElementById('stepMeta').textContent = `Adım ${currentStep} / ${STEPS}`;
+
+            // Butonlar
+            document.getElementById('btnPrev').style.display = currentStep > 1 ? '' : 'none';
+            document.getElementById('btnNext').style.display = currentStep < STEPS ? '' : 'none';
+            document.getElementById('btnSubmit').style.display = currentStep === STEPS ? '' : 'none';
+
+            renderHelper(currentStep);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() { goStep(currentStep + 1); }
+        function prevStep() { goStep(currentStep - 1); }
+
+        /* ── Canlı Önizleme ── */
+        function updatePreview() {
+            const plate = document.getElementById('PlateNumber')?.value?.toUpperCase() || '— — —';
+            const year = document.getElementById('Year')?.value || '—';
+            const km = document.getElementById('Kilometer')?.value;
+            const fuel = document.getElementById('FuelType')?.value || '—';
+            const seat = document.getElementById('SeatCount')?.value || '—';
+            const bag = document.getElementById('LuggageCount')?.value || '—';
+            const price = document.getElementById('DailyPrice')?.value;
+            const imgUrl = document.getElementById('ImageUrl')?.value?.trim();
+
+            const brandSel = document.getElementById('BrandId');
+            const modSel = document.getElementById('CarModelId');
+            const brandTxt = brandSel?.selectedIndex > 0 ? brandSel.options[brandSel.selectedIndex].text : '';
+            const modTxt = modSel?.selectedIndex > 0 ? modSel.options[modSel.selectedIndex].text : '';
+
+            const card = document.getElementById('previewCard');
+            const pImg = document.getElementById('previewImgEl');
+            const pPh = document.getElementById('previewImgPh');
+
+            const hasData = !!(document.getElementById('PlateNumber')?.value ||
+                document.getElementById('Year')?.value ||
+                brandTxt);
+            card.classList.toggle('has-data', hasData);
+
+            // Plaka
+            document.getElementById('previewPlate').textContent = plate || '— — —';
+
+            // Başlık
+            const title = [brandTxt, modTxt].filter(Boolean).join(' ');
+            const pTitle = document.getElementById('previewTitle');
+            pTitle.textContent = title || 'Araç bilgileri girilmedi…';
+            pTitle.classList.toggle('ph', !title);
+
+            // Meta
+            document.getElementById('previewYear').textContent = year;
+            document.getElementById('pc-km').textContent = km ? parseInt(km).toLocaleString('tr-TR') : '—';
+            document.getElementById('pc-fuel').textContent = fuel || '—';
+            document.getElementById('pc-seat').textContent = seat;
+            document.getElementById('pc-bag').textContent = bag;
+
+            // Fiyat
+            document.getElementById('previewPrice').textContent = price
+                ? parseFloat(price).toLocaleString('tr-TR', { minimumFractionDigits: 0 }) + ' ₺'
+                : '— ₺';
+
+            // Görsel
+            if (imgUrl) {
+                pImg.src = imgUrl;
+                pImg.style.display = 'block';
+                pPh.style.display = 'none';
+                pImg.onerror = imgError;
+            } else {
+                pImg.style.display = 'none';
+                pPh.style.display = 'block';
+            }
+        }
+
+        function imgError() {
+            document.getElementById('previewImgEl').style.display = 'none';
+            document.getElementById('previewImgPh').style.display = 'block';
+        }
+
+        function testImage() {
+            const url = document.getElementById('ImageUrl').value.trim();
+            const box = document.getElementById('imgPreviewBox');
+            const img = document.getElementById('imgPreviewEl');
+
+            if (!url) { box.style.display = 'none'; return; }
+
+            img.src = url;
+            box.style.display = 'block';
+            img.onload = () => { updatePreview(); };
+            img.onerror = () => { box.style.display = 'none'; imgError(); };
+        }
+
+        function clearImage() {
+            document.getElementById('ImageUrl').value = '';
+            document.getElementById('imgPreviewBox').style.display = 'none';
+            document.getElementById('previewImgEl').style.display = 'none';
+            document.getElementById('previewImgPh').style.display = 'block';
+        }
+
+        document.getElementById('carForm').addEventListener('submit', function () {
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor…';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            goStep(1);
+            updatePreview();
+        });
+        document.getElementById('BrandId').addEventListener('change', function () {
+            const brandId = this.value;
+            const modelSelect = document.getElementById('CarModelId');
+
+            // Önce temizle
+            modelSelect.innerHTML = '<option value="">— Model Seçin —</option>';
+
+            if (!brandId) return;
+
+            // AJAX ile markaya ait modelleri çek
+            fetch(`/Car/GetModelsByBrand?brandId=${brandId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.carModelId;
+                        opt.textContent = m.modelName;
+                        modelSelect.appendChild(opt);
+                    });
+                });
+        });
+    </script>
+}
+
+

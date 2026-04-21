@@ -1,0 +1,47 @@
+﻿@model List<Rentaly.EntityLayer.Entities.About>
+
+<section class="text-light jarallax">
+    <img src="/RentalyTema/images/background/2.jpg" class="jarallax-img" alt="">
+    <div class="container">
+        <div class="row g-5">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-6 wow fadeInRight">
+                    <h2>@item.Title</h2>
+                </div>
+                <div class="col-lg-6 wow fadeInLeft">
+                   @item.Decription
+                </div>
+            }
+
+        </div>
+        <div class="spacer-double"></div>
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6 mb-sm-30">
+                <div class="de_count transparent text-light wow fadeInUp">
+                    <h3 class="timer" data-to="@ViewBag.rentalCount" data-speed="3000">0</h3>
+                    Tamamlanan Kiralama
+
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-sm-30">
+                <div class="de_count transparent text-light wow fadeInUp">
+                    <h3 class="timer" data-to="@ViewBag.customerCount" data-speed="3000">0</h3>
+                    Mutlu Müşteri
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-sm-30">
+                <div class="de_count transparent text-light wow fadeInUp">
+                    <h3 class="timer" data-to="@ViewBag.carCount" data-speed="3000">0</h3>
+                    Filodaki Araç
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-sm-30">
+                <div class="de_count transparent text-light wow fadeInUp">
+                    <h3 class="timer" data-to="@ViewBag.year" data-speed="3000">0</h3>
+                    Sektör Deneyimi
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

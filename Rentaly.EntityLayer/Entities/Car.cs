@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rentaly.EntityLayer.Entities
+{
+    public class Car
+    {
+        public int CarId { get; set; }
+        public string PlateNumber { get; set; }
+        public string VIN { get; set; } // Şasi No
+        public int BrandId { get; set; }
+        public Brand Brand { get; set; }
+        public int CarModelId { get; set; }
+        public CarModel CarModel { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+        public int BranchId { get; set; } //Şube
+        public Branch Branch { get; set; }
+        public int Year { get; set; }
+        public int Kilometer { get; set; }
+        public decimal DailyPrice { get; set; }
+        public decimal DepositAmount { get; set; }
+        public bool IsAvailable { get; set; }
+        public bool IsActive { get; set; }
+        public string ImageUrl { get; set; } 
+        public int SeatCount { get; set; } //Kişi Sayısı
+        public int LuggageCount { get; set; } // Valiz Sayısı
+        public string FuelType{ get; set; }
+    }
+}

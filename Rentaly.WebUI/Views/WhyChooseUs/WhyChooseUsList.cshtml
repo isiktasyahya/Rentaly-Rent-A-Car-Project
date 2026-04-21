@@ -1,0 +1,969 @@
+﻿@model List<Rentaly.EntityLayer.Entities.WhyChooseUs>
+@{
+    ViewData["Title"] = "WhyChooseUsList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Stats */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .s-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .s-card.indigo::before {
+                background: var(--accent);
+            }
+
+            .s-card.emerald::before {
+                background: var(--emerald);
+            }
+
+            .s-card.amber::before {
+                background: var(--amber);
+            }
+
+            .s-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .s-card:hover::before {
+                    opacity: 1;
+                }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .s-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .s-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .sw {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+            .sw i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .s-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .s-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .s-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .view-toggle {
+            display: flex;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--page-bg);
+        }
+
+        .v-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--t-s);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+            .v-btn.active {
+                background: var(--accent);
+                color: #fff;
+            }
+
+            .v-btn:hover:not(.active) {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: 1.5px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            transition: all var(--t-s);
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--accent-lighter);
+                border-color: #c7d2fe;
+                color: var(--accent);
+            }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-add:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        /* ══ KART GÖRÜNÜMÜ ══ */
+        .wcu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .wcu-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--t);
+            position: relative;
+        }
+
+            .wcu-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-3px);
+                border-color: #c7d2fe;
+            }
+
+        .wcu-card-stripe {
+            height: 4px;
+            background: linear-gradient(90deg,var(--accent) 0%,#818cf8 100%);
+            flex-shrink: 0;
+        }
+
+        .wcu-card-header {
+            padding: 20px 20px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .wcu-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: all var(--t-s);
+        }
+
+        .wcu-card:hover .wcu-icon-box {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .wcu-icon-box img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            transition: filter var(--t-s);
+        }
+
+        .wcu-card:hover .wcu-icon-box img {
+            filter: brightness(0) invert(1);
+        }
+
+        .wcu-icon-ph {
+            font-size: 22px;
+            color: var(--accent);
+            transition: color var(--t-s);
+        }
+
+        .wcu-card:hover .wcu-icon-ph {
+            color: #fff;
+        }
+
+        .wcu-id-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-lighter);
+            color: var(--accent-text);
+            border: 1px solid #c7d2fe;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 99px;
+            font-family: var(--font-display);
+            margin-bottom: 5px;
+        }
+
+        .wcu-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .wcu-card-body {
+            padding: 14px 20px;
+            flex: 1;
+        }
+
+        .wcu-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .wcu-icon-url {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 10px;
+            background: var(--page-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border);
+        }
+
+            .wcu-icon-url i {
+                font-size: 11px;
+                color: var(--text-muted);
+                flex-shrink: 0;
+            }
+
+            .wcu-icon-url span {
+                font-size: 11.5px;
+                color: var(--text-muted);
+                font-family: monospace;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+        .wcu-card-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            gap: 7px;
+        }
+
+        /* ══ LİSTE GÖRÜNÜMÜ ══ */
+        .wcu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .wcu-list-item {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .wcu-list-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                background: linear-gradient(180deg,var(--accent) 0%,#818cf8 100%);
+            }
+
+            .wcu-list-item:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateX(2px);
+                border-color: #c7d2fe;
+            }
+
+        .wcu-list-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: all var(--t-s);
+        }
+
+        .wcu-list-item:hover .wcu-list-icon {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .wcu-list-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            transition: filter var(--t-s);
+        }
+
+        .wcu-list-item:hover .wcu-list-icon img {
+            filter: brightness(0) invert(1);
+        }
+
+        .wcu-list-icon .wcu-icon-ph {
+            font-size: 18px;
+            color: var(--accent);
+            transition: color var(--t-s);
+        }
+
+        .wcu-list-item:hover .wcu-list-icon .wcu-icon-ph {
+            color: #fff;
+        }
+
+        .wcu-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .wcu-list-title {
+            font-family: var(--font-display);
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wcu-list-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 500px;
+        }
+
+        .wcu-list-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* Butonlar */
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+            flex: 1;
+            justify-content: center;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            padding: 7px 10px;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* Empty */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        /* Delete Modal */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+            background: #fafbff;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        /* Toast */
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wcu-card {
+            animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+            .wcu-card:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+
+            .wcu-card:nth-child(2) {
+                animation-delay: 0.10s;
+            }
+
+            .wcu-card:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+
+            .wcu-card:nth-child(4) {
+                animation-delay: 0.20s;
+            }
+
+            .wcu-card:nth-child(5) {
+                animation-delay: 0.25s;
+            }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width:640px) {
+            .wcu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .wcu-list-desc {
+                display: none;
+            }
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Neden Bizi Seçmelisiniz?</h1>
+        <p class="page-desc">Ana sayfada gösterilen avantaj ve özellik içeriklerini yönetin.</p>
+    </div>
+    <a href="/WhyChooseUs/CreateWhyChooseUs" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Yeni Ekle
+    </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-row">
+    <div class="s-card indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Madde</div>
+        </div>
+    </div>
+    <div class="s-card emerald">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-eye"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;" id="statVisible">@Model.Count()</div>
+            <div class="s-lbl">Gösterilen</div>
+        </div>
+    </div>
+    <div class="s-card amber">
+        <div class="s-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#d97706;">
+                @Model.Count(w => !string.IsNullOrEmpty(w.IconUrl))
+            </div>
+            <div class="s-lbl">İkon Tanımlı</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="sw">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="wcuSearch"
+               placeholder="Başlık veya açıklama ara…"
+               oninput="filterItems()" />
+    </div>
+    <div class="view-toggle">
+        <button class="v-btn active" id="btnGrid" onclick="setView('grid')" title="Kart Görünümü">
+            <i class="fa-solid fa-grip"></i>
+        </button>
+        <button class="v-btn" id="btnList" onclick="setView('list')" title="Liste Görünümü">
+            <i class="fa-solid fa-list"></i>
+        </button>
+    </div>
+    <button class="btn-reset" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- KART GÖRÜNÜMÜ -->
+<div class="wcu-grid" id="wcuGrid">
+    @foreach (var item in Model)
+    {
+        <div class="wcu-card"
+             data-id="@item.WhyChooseUsId"
+             data-title="@item.Title?.ToLower()"
+             data-desc="@item.Description?.ToLower()">
+
+            <div class="wcu-card-stripe"></div>
+
+            <div class="wcu-card-header">
+                <div class="wcu-icon-box">
+                    @if (!string.IsNullOrEmpty(item.IconUrl))
+                    {
+                        <img src="@item.IconUrl" alt="@item.Title"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                        <span class="wcu-icon-ph" style="display:none;"><i class="fa-solid fa-shield-halved"></i></span>
+                    }
+                    else
+                    {
+                        <span class="wcu-icon-ph"><i class="fa-solid fa-shield-halved"></i></span>
+                    }
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div class="wcu-id-badge"># @item.WhyChooseUsId</div>
+                    <div class="wcu-card-title">@item.Title</div>
+                </div>
+            </div>
+
+            <div class="wcu-card-body">
+                <div class="wcu-desc">@item.Description</div>
+                @if (!string.IsNullOrEmpty(item.IconUrl))
+                {
+                    <div class="wcu-icon-url">
+                        <i class="fa-solid fa-link"></i>
+                        <span title="@item.IconUrl">@item.IconUrl</span>
+                    </div>
+                }
+            </div>
+
+            <div class="wcu-card-footer">
+                <a href="/WhyChooseUs/UpdateWhyChooseUs/@item.WhyChooseUsId" class="tbl-btn tbl-btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                </a>
+                <a href="/WhyChooseUs/DeleteWhyChooseUs/@item.WhyChooseUsId" class="tbl-btn tbl-btn-delete"
+                   onclick="return confirm('Bu maddeyi silmek istediğinizden emin misiniz?')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- LİSTE GÖRÜNÜMÜ -->
+<div class="wcu-list" id="wcuList" style="display:none;">
+    @foreach (var item in Model)
+    {
+        <div class="wcu-list-item"
+             data-id="@item.WhyChooseUsId"
+             data-title="@item.Title?.ToLower()"
+             data-desc="@item.Description?.ToLower()">
+
+            <div class="wcu-list-icon">
+                @if (!string.IsNullOrEmpty(item.IconUrl))
+                {
+                    <img src="@item.IconUrl" alt="@item.Title"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                    <span class="wcu-icon-ph" style="display:none;"><i class="fa-solid fa-shield-halved"></i></span>
+                }
+                else
+                {
+                    <span class="wcu-icon-ph"><i class="fa-solid fa-shield-halved"></i></span>
+                }
+            </div>
+
+            <div class="wcu-list-info">
+                <div class="wcu-list-title">
+                    @item.Title
+                    <span class="wcu-id-badge">#@item.WhyChooseUsId</span>
+                </div>
+                <div class="wcu-list-desc">@item.Description</div>
+            </div>
+
+            <div class="wcu-list-actions">
+                <a href="/WhyChooseUs/UpdateWhyChooseUs/@item.WhyChooseUsId" class="tbl-btn tbl-btn-edit" style="flex:none;padding:7px 11px;">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <a href="/WhyChooseUs/DeleteWhyChooseUs/@item.WhyChooseUsId" class="tbl-btn tbl-btn-delete"
+                   onclick="return confirm('Bu maddeyi silmek istediğinizden emin misiniz?')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <div class="empty-title">İçerik Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Arama kriterinizle eşleşen içerik yok.</p>
+    <button class="btn-add" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    let currentView = 'grid';
+
+    function setView(v) {
+        currentView = v;
+        document.getElementById('wcuGrid').style.display = v === 'grid' ? 'grid' : 'none';
+        document.getElementById('wcuList').style.display = v === 'list' ? 'flex' : 'none';
+        document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+        document.getElementById('btnList').classList.toggle('active', v === 'list');
+        filterItems();
+    }
+
+    function filterItems() {
+        const q = document.getElementById('wcuSearch').value.toLowerCase().trim();
+        const gridItems = [...document.querySelectorAll('#wcuGrid .wcu-card')];
+        const listItems = [...document.querySelectorAll('#wcuList .wcu-list-item')];
+        const match = el => !q || (el.dataset.title||'').includes(q) || (el.dataset.desc||'').includes(q) || el.dataset.id.includes(q);
+        let visible = 0;
+        gridItems.forEach(el => { const s = match(el); el.style.display = s ? '' : 'none'; if(s) visible++; });
+        listItems.forEach(el => { el.style.display = match(el) ? '' : 'none'; });
+        document.getElementById('statVisible').textContent = visible;
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('wcuSearch').value = '';
+        filterItems();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success: 'fa-check-circle', info: 'fa-circle-info', danger: 'fa-triangle-exclamation' };
+        const colors = { success: '#10b981', info: 'var(--accent)', danger: '#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterItems();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+
+

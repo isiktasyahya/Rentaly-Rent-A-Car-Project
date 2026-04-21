@@ -1,0 +1,70 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zxx">
+
+@await Component.InvokeAsync("_DefaultHead");
+
+<body onload="initialize()">
+    <div id="wrapper">
+
+        <!-- page preloader begin -->
+        <div id="de-preloader"></div>
+        <!-- page preloader close -->
+        <!-- header begin -->
+        @await Component.InvokeAsync("_DefaultHeader")
+        
+        
+        <!-- header close -->
+        <!-- content begin -->
+        <div class="no-bottom no-top" id="content">
+            <div id="top"></div>
+            <section id="section-hero" aria-label="section" class="jarallax">
+                <img src="/RentalyTema/images/background/1.jpg" class="jarallax-img" alt="">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-12 text-light">
+                            <div class="spacer-double"></div>
+                            <div class="spacer-double"></div>
+                            <h1 class="mb-2">Hayalinizdeki <span class="id-color">aracı</span> keşfedin, yolculuğunuza bizimle başlayın.</h1>
+                            <div class="spacer-single"></div>
+                        </div>
+                        @await Component.InvokeAsync("_SearchCar")
+                        
+
+                        <div class="spacer-double"></div>
+                        @await Component.InvokeAsync("_DefaultProcess")
+
+                    </div>
+                </div>
+            </section>
+            @await Component.InvokeAsync("_DefaultCategories")
+            
+            @await Component.InvokeAsync("_DefaultFeature")
+
+            @await Component.InvokeAsync("_DefaultAbout")
+            @await Component.InvokeAsync("_DefaultCarList")
+            @await Component.InvokeAsync("_DefaultWhyChooseUs")
+            @await Component.InvokeAsync("_DefaultTestimonial")
+            @await Component.InvokeAsync("_DefaultFaq")
+            @await Component.InvokeAsync("_DefaultContact")
+            @await Component.InvokeAsync("_DefaultFooter")
+                
+            
+
+        </div>
+        <!-- content close -->
+        <a href="#" id="back-to-top"></a>
+        <!-- footer begin -->
+        
+        <!-- footer close -->
+    </div>
+    @await Component.InvokeAsync("_DefaultScript")
+ 
+
+</body>
+
+</html>

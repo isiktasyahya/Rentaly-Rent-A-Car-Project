@@ -1,0 +1,73 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Faq>
+
+@{
+    var leftItems = Model.Take(3).ToList();
+    var rightItems = Model.Skip(3).Take(3).ToList();
+    int count = 1;
+}
+
+<section id="section-faq">
+    <div class="container">
+
+        <div class="row">
+            <div class="col text-center">
+                <h2>Sorularınız mı Var?</h2>
+                <div class="spacer-20"></div>
+            </div>
+        </div>
+
+        <div class="row g-custom-x">
+
+            <!-- SOL TARAF -->
+            <div class="col-md-6 wow fadeInUp">
+                <div class="accordion secondary">
+
+                    <div class="accordion-section">
+
+                        @foreach (var item in leftItems)
+                        {
+                            var tabId = "accordion-left-" + count;
+
+                            <div class="accordion-section-title" data-tab="#@tabId">
+                                @item.Title
+                            </div>
+
+                            <div class="accordion-section-content" id="@tabId">
+                                <p>@item.Description</p>
+                            </div>
+
+                            count++;
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAĞ TARAF -->
+            <div class="col-md-6 wow fadeInUp">
+                <div class="accordion secondary">
+
+                    <div class="accordion-section">
+
+                        @foreach (var item in rightItems)
+                        {
+                            var tabId = "accordion-right-" + count;
+
+                            <div class="accordion-section-title" data-tab="#@tabId">
+                                @item.Title
+                            </div>
+
+                            <div class="accordion-section-content" id="@tabId">
+                                <p>@item.Description</p>
+                            </div>
+
+                            count++;
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

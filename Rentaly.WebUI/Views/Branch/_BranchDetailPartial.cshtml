@@ -1,0 +1,19 @@
+﻿@model Rentaly.EntityLayer.Entities.Branch
+
+<div class="p-4">
+    <h3>@Model.BranchName</h3>
+    <hr />
+
+    <p><strong>Şehir:</strong> @Model.City</p>
+    <p><strong>Adres:</strong> @Model.Address</p>
+    <p><strong>Araç Sayısı:</strong> @Model.Cars.Count()</p>
+
+    <hr />
+
+    <h5>Araçlar</h5>
+
+    @foreach (var item in Model.Cars)
+    {
+        <p>- @item.Branch</p>
+    }
+</div>

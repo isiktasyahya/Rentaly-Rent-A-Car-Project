@@ -1,0 +1,1184 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Category>
+@{
+    ViewData["Title"] = "Kategori Listesi";
+    ViewData["PageTitle"] = "Kategori Listesi";
+    ViewData["BreadcrumbParent"] = "Araç Yönetimi";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+@section Styles {
+    <style>
+            /* ══════════════════════════════════════════
+           CATEGORY LIST — Indigo Daylight Theme
+        ══════════════════════════════════════════ */
+
+            /* ── Mini Stats ── */
+            .mini-stat {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                padding: 18px 20px;
+                box-shadow: var(--card-shadow);
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                transition: all var(--t);
+                position: relative;
+                overflow: hidden;
+            }
+
+                .mini-stat::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                    background: var(--accent);
+                    opacity: 0;
+                    transition: opacity var(--t);
+                }
+
+                .mini-stat:hover {
+                    box-shadow: var(--card-shadow-hover);
+                    transform: translateY(-2px);
+                    border-color: #c7d2fe;
+                }
+
+                    .mini-stat:hover::before {
+                        opacity: 1;
+                    }
+
+            .mini-stat-icon {
+                width: 46px;
+                height: 46px;
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 19px;
+                flex-shrink: 0;
+            }
+
+            .mini-stat-val {
+                font-family: var(--font-display);
+                font-size: 26px;
+                font-weight: 700;
+                color: var(--text-primary);
+                line-height: 1;
+                letter-spacing: -0.02em;
+            }
+
+            .mini-stat-label {
+                font-size: 12px;
+                color: var(--text-muted);
+                margin-top: 4px;
+                font-weight: 500;
+            }
+
+            /* ── Page Header ── */
+            .page-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 24px;
+            }
+
+            .page-title {
+                font-family: var(--font-display);
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text-primary);
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+
+            .page-desc {
+                font-size: 13.5px;
+                color: var(--text-muted);
+                margin-top: 3px;
+            }
+
+            /* ── Toolbar ── */
+            .cat-toolbar {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                padding: 13px 18px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                box-shadow: var(--card-shadow);
+                margin-bottom: 20px;
+            }
+
+            .search-wrap {
+                position: relative;
+                flex: 1;
+                min-width: 220px;
+            }
+
+                .search-wrap i {
+                    position: absolute;
+                    left: 13px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--text-muted);
+                    font-size: 13px;
+                    pointer-events: none;
+                }
+
+            .search-input {
+                width: 100%;
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                padding: 9px 13px 9px 38px;
+                font-size: 13.5px;
+                font-family: var(--font-body);
+                color: var(--text-primary);
+                background: var(--page-bg);
+                outline: none;
+                transition: all var(--t-s);
+            }
+
+                .search-input:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+                .search-input::placeholder {
+                    color: var(--text-muted);
+                }
+
+            .toolbar-select {
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                font-size: 13px;
+                font-family: var(--font-body);
+                padding: 9px 12px;
+                outline: none;
+                cursor: pointer;
+                transition: all var(--t-s);
+                min-width: 170px;
+            }
+
+                .toolbar-select:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+            .btn-reset {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 9px 14px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                cursor: pointer;
+                border: 1.5px solid var(--card-border);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                transition: all var(--t-s);
+                white-space: nowrap;
+            }
+
+                .btn-reset:hover {
+                    background: var(--accent-lighter);
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                }
+
+            .btn-primary-rc {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 20px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+                white-space: nowrap;
+            }
+
+                .btn-primary-rc:hover {
+                    background: var(--accent-hover);
+                    box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                    transform: translateY(-1px);
+                    color: #fff;
+                }
+
+            /* ── Table Card ── */
+            .table-card {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: var(--card-shadow);
+                overflow: hidden;
+            }
+
+                .table-card table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                .table-card thead tr {
+                    background: #fafbff;
+                    border-bottom: 1.5px solid var(--card-border);
+                }
+
+                .table-card thead th {
+                    padding: 11px 18px;
+                    font-family: var(--font-display);
+                    font-size: 10.5px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.10em;
+                    color: var(--text-muted);
+                    white-space: nowrap;
+                    cursor: pointer;
+                    user-select: none;
+                    transition: color var(--t-s);
+                }
+
+                    .table-card thead th:hover {
+                        color: var(--accent);
+                    }
+
+                    .table-card thead th.sorted {
+                        color: var(--accent);
+                    }
+
+            .sort-icon {
+                margin-left: 4px;
+                opacity: 0.4;
+                font-size: 10px;
+            }
+
+            .sorted .sort-icon {
+                opacity: 1;
+            }
+
+            .table-card tbody tr {
+                border-bottom: 1px solid #f3f4f6;
+                transition: background var(--t-s);
+            }
+
+                .table-card tbody tr:last-child {
+                    border-bottom: none;
+                }
+
+                .table-card tbody tr:hover {
+                    background: #fafbff;
+                }
+
+            .table-card tbody td {
+                padding: 13px 18px;
+                font-size: 13.5px;
+                color: var(--text-secondary);
+                vertical-align: middle;
+            }
+
+            /* ID Badge */
+            .id-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 32px;
+                height: 32px;
+                padding: 0 8px;
+                background: var(--accent-lighter);
+                color: var(--accent-text);
+                border: 1.5px solid #c7d2fe;
+                border-radius: var(--radius-sm);
+                font-family: var(--font-display);
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            /* Category name cell */
+            .cat-name-cell {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .cat-icon-box {
+                width: 38px;
+                height: 38px;
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                flex-shrink: 0;
+                transition: all var(--t-s);
+            }
+
+            .table-card tbody tr:hover .cat-icon-box {
+                transform: scale(1.08);
+            }
+
+            .cat-name-text {
+                font-family: var(--font-display);
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            .cat-name-sub {
+                font-size: 11.5px;
+                color: var(--text-muted);
+                margin-top: 1px;
+            }
+
+            /* Count badge */
+            .count-badge {
+                display: inline-flex;
+                align-items: center;
+                background: var(--accent-lighter);
+                color: var(--accent-text);
+                border: 1px solid #c7d2fe;
+                font-family: var(--font-display);
+                font-size: 12.5px;
+                font-weight: 700;
+                padding: 3px 12px;
+                border-radius: 99px;
+            }
+
+            /* Action buttons */
+            .tbl-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                padding: 7px 12px;
+                border-radius: var(--radius-sm);
+                font-size: 12.5px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                cursor: pointer;
+                transition: all var(--t-s);
+                border: 1.5px solid transparent;
+                text-decoration: none;
+            }
+
+            .tbl-btn-edit {
+                background: #fef3c7;
+                color: #92400e;
+                border-color: #fde68a;
+            }
+
+                .tbl-btn-edit:hover {
+                    background: #f59e0b;
+                    color: #fff;
+                    border-color: #f59e0b;
+                }
+
+            .tbl-btn-delete {
+                background: #fff1f2;
+                color: #e11d48;
+                border-color: #fecdd3;
+            }
+
+                .tbl-btn-delete:hover {
+                    background: #f43f5e;
+                    color: #fff;
+                    border-color: #f43f5e;
+                }
+
+            /* ── Empty State ── */
+            .empty-state {
+                padding: 64px 20px;
+                text-align: center;
+            }
+
+            .empty-icon {
+                width: 72px;
+                height: 72px;
+                background: var(--accent-lighter);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                color: var(--accent);
+                margin: 0 auto 18px;
+                position: relative;
+            }
+
+                .empty-icon::after {
+                    content: '';
+                    position: absolute;
+                    inset: -6px;
+                    border-radius: 50%;
+                    border: 2px dashed #c7d2fe;
+                    animation: spin 12s linear infinite;
+                }
+
+            @@keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .empty-title {
+                font-family: var(--font-display);
+                font-size: 16px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 6px;
+            }
+
+            /* ── Pagination ── */
+            .paging-wrap {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 13px 18px;
+                border-top: 1px solid var(--card-border);
+                background: #fafbff;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .paging-info {
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+            .paging-btns {
+                display: flex;
+                gap: 4px;
+            }
+
+            .page-btn {
+                width: 34px;
+                height: 34px;
+                border: 1.5px solid var(--card-border);
+                background: var(--card-bg);
+                border-radius: var(--radius-sm);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all var(--t-s);
+                color: var(--text-secondary);
+                font-family: var(--font-display);
+            }
+
+                .page-btn:hover {
+                    background: var(--accent-lighter);
+                    border-color: #c7d2fe;
+                    color: var(--accent);
+                }
+
+                .page-btn.active {
+                    background: var(--accent);
+                    border-color: var(--accent);
+                    color: #fff;
+                    box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+                }
+
+                .page-btn:disabled {
+                    opacity: 0.4;
+                    cursor: not-allowed;
+                }
+
+            /* ── Modals ── */
+            .modal-content {
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-lg);
+                box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+            }
+
+            .modal-header {
+                border-bottom: 1px solid var(--card-border);
+                padding: 16px 20px;
+                background: #fafbff;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+
+            .modal-body {
+                padding: 22px;
+            }
+
+            .modal-footer {
+                border-top: 1px solid var(--card-border);
+                padding: 14px 20px;
+                gap: 8px;
+                background: #fafbff;
+            }
+
+            .modal-title {
+                font-family: var(--font-display);
+                font-size: 15px;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .modal-form-label {
+                font-family: var(--font-display);
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 7px;
+                display: block;
+            }
+
+            .modal-form-control {
+                width: 100%;
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius-sm);
+                padding: 10px 14px;
+                font-size: 13.5px;
+                font-family: var(--font-body);
+                color: var(--text-primary);
+                background: var(--page-bg);
+                outline: none;
+                transition: all var(--t-s);
+            }
+
+                .modal-form-control:focus {
+                    border-color: var(--accent);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+                }
+
+                .modal-form-control.is-invalid {
+                    border-color: var(--rose);
+                    box-shadow: 0 0 0 3px rgba(244,63,94,0.08);
+                }
+
+                .modal-form-control::placeholder {
+                    color: var(--text-muted);
+                }
+
+            /* Color picker */
+            .color-options {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 6px;
+            }
+
+            .color-dot-radio {
+                display: none;
+            }
+
+                .color-dot-radio + label {
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    border: 2.5px solid transparent;
+                    transition: all var(--t-s);
+                    display: block;
+                }
+
+                    .color-dot-radio:checked + label, .color-dot-radio + label:hover {
+                        border-color: var(--text-primary);
+                        transform: scale(1.18);
+                        box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+                    }
+
+            .btn-cancel {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 9px 18px;
+                border-radius: var(--radius-sm);
+                font-size: 13px;
+                font-weight: 600;
+                font-family: var(--font-body);
+                background: var(--page-bg);
+                color: var(--text-secondary);
+                border: 1.5px solid var(--card-border);
+                cursor: pointer;
+                transition: all var(--t-s);
+            }
+
+                .btn-cancel:hover {
+                    background: var(--card-border);
+                }
+
+            .btn-confirm-delete {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                background: #f43f5e;
+                color: #fff;
+                border: none;
+                border-radius: var(--radius-sm);
+                padding: 9px 22px;
+                font-size: 13.5px;
+                font-weight: 700;
+                font-family: var(--font-body);
+                cursor: pointer;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+            }
+
+                .btn-confirm-delete:hover {
+                    background: #e11d48;
+                    box-shadow: 0 4px 16px rgba(244,63,94,0.35);
+                    transform: translateY(-1px);
+                }
+
+            .btn-modal-save {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: var(--radius-sm);
+                padding: 9px 22px;
+                font-size: 13.5px;
+                font-weight: 700;
+                font-family: var(--font-body);
+                cursor: pointer;
+                transition: all var(--t-s);
+                box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            }
+
+                .btn-modal-save:hover {
+                    background: var(--accent-hover);
+                    box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                    transform: translateY(-1px);
+                }
+
+            /* Toast */
+            .rc-toast {
+                background: var(--card-bg);
+                border: 1.5px solid var(--card-border);
+                border-radius: var(--radius);
+                box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+                padding: 12px 16px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 13.5px;
+                font-family: var(--font-body);
+                color: var(--text-primary);
+                min-width: 260px;
+                animation: toastIn 0.3s ease both;
+            }
+
+            @@keyframes toastIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @@media (max-width: 575px) {
+                .table-card thead th:nth-child(1) {
+                    display: none;
+                }
+
+                .table-card tbody td:nth-child(1) {
+                    display: none;
+                }
+
+                .tbl-btn span {
+                    display: none;
+                }
+
+                .tbl-btn {
+                    padding: 7px 9px;
+                }
+            }
+    </style>
+}
+
+<!-- ═══ Page Header ═══ -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Kategori Listesi</h1>
+        <p class="page-desc">Araç kategorilerini görüntüleyin ve yönetin.</p>
+    </div>
+    
+    <a href="/Admin/Category/CreateCategory" class="btn-primary-rc">
+        <i class="fa-solid fa-plus"></i> Yeni Kategori
+    </a>
+</div>
+
+<!-- ═══ Mini Stats ═══ -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:var(--accent-lighter);color:var(--accent);">
+                <i class="fa-solid fa-tags"></i>
+            </div>
+            <div>
+                <div class="mini-stat-val" id="statTotal">@Model.Count()</div>
+                <div class="mini-stat-label">Toplam Kategori</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:#d1fae5;color:#059669;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <div class="mini-stat-val" style="color:#059669;" id="statFiltered">@Model.Count()</div>
+                <div class="mini-stat-label">Gösterilen</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 d-none d-md-block">
+        <div class="mini-stat">
+            <div class="mini-stat-icon" style="background:#fef3c7;color:#d97706;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <div>
+                <div class="mini-stat-val" style="color:#d97706;font-size:17px;" id="statLast">
+                    @(Model.Any() ? Model.Last().CategoryName.Substring(0, Math.Min(8, Model.Last().CategoryName.Length)) + (Model.Last().CategoryName.Length > 8 ? "…" : "") : "—")
+                </div>
+                <div class="mini-stat-label">Son Eklenen</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Toolbar ═══ -->
+<div class="cat-toolbar">
+    <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="catSearch"
+               placeholder="Kategori adı ara…"
+               oninput="filterCategories()" />
+    </div>
+    <select class="toolbar-select" id="sortSelect" onchange="sortCategories()">
+        <option value="id-asc">ID — Artan</option>
+        <option value="id-desc">ID — Azalan</option>
+        <option value="name-asc">İsim — A → Z</option>
+        <option value="name-desc">İsim — Z → A</option>
+    </select>
+    <button class="btn-reset" onclick="resetCatFilters()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- ═══ Table Card ═══ -->
+<div class="table-card">
+    <table id="catTable">
+        <thead>
+            <tr>
+                <th onclick="sortBy('id')" style="width:80px;">
+                    # <i class="fa-solid fa-sort sort-icon" id="sort-id"></i>
+                </th>
+                <th onclick="sortBy('name')">
+                    Kategori Adı <i class="fa-solid fa-sort sort-icon" id="sort-name"></i>
+                </th>
+                <th style="width:130px;text-align:center;">Araç Sayısı</th>
+                <th style="width:180px;text-align:right;">İşlemler</th>
+            </tr>
+        </thead>
+        <tbody id="catTableBody">
+            @{
+                var colorPairs = new[] {
+                    ("#ede9fe","#4f46e5"), ("#d1fae5","#059669"), ("#fef3c7","#d97706"),
+                    ("#ffe4e6","#e11d48"), ("#e0f2fe","#0284c7"), ("#f3e8ff","#9333ea"),
+                    ("#dcfce7","#16a34a"), ("#fce7f3","#db2777"), ("#ffedd5","#ea580c"),
+                    ("#f1f5f9","#475569")
+                };
+                var icons = new[] {
+                    "fa-car-side","fa-truck","fa-motorcycle","fa-van-shuttle",
+                    "fa-car-rear","fa-bus","fa-taxi","fa-car","fa-jeep","fa-rocket"
+                };
+                int idx = 0;
+            }
+            @foreach (var cat in Model)
+            {
+                var (bg, fg) = colorPairs[idx % colorPairs.Length];
+                var icon = icons[idx % icons.Length];
+                idx++;
+
+                <tr data-id="@cat.CategoryId" data-name="@cat.CategoryName.ToLower()">
+                    <td><span class="id-badge">@cat.CategoryId</span></td>
+                    <td>
+                        <div class="cat-name-cell">
+                            <div class="cat-icon-box" style="background:@bg;color:@fg;">
+                                <i class="fa-solid @icon"></i>
+                            </div>
+                            <div>
+                                <div class="cat-name-text">@cat.CategoryName</div>
+                                <div class="cat-name-sub">Kategori #@cat.CategoryId</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="text-align:center;">
+                        <span class="count-badge">—</span>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;justify-content:flex-end;">
+                            <button class="tbl-btn tbl-btn-edit"
+                                    onclick="openEditModal(@cat.CategoryId, '@cat.CategoryName')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Düzenle</span>
+                            </button>
+                            <button class="tbl-btn tbl-btn-delete"
+                                    onclick="openDeleteModal(@cat.CategoryId, '@cat.CategoryName')">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-icon"><i class="fa-solid fa-tags"></i></div>
+        <div class="empty-title">Kategori Bulunamadı</div>
+        <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:16px;">
+            Arama kriterinizle eşleşen kategori yok.
+        </p>
+        <button class="btn-primary-rc" onclick="resetCatFilters()">
+            <i class="fa-solid fa-rotate-left"></i> Filtreyi Temizle
+        </button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="paging-wrap" id="pagingWrap" style="display:none;">
+        <div class="paging-info" id="pagingInfo">—</div>
+        <div class="paging-btns" id="pagingBtns"></div>
+    </div>
+</div>
+
+<!-- ═══ EKLE / DÜZENLE MODAL ═══ -->
+<div class="modal fade" id="catModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:440px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div id="modalHeaderIcon" style="width:36px;height:36px;background:var(--accent-lighter);border:1.5px solid #c7d2fe;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px;">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <h5 class="modal-title" id="modalTitle">Yeni Kategori</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="catModalForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="modalCatId" name="CategoryId" value="0" />
+                <div class="modal-body" style="display:flex;flex-direction:column;gap:18px;">
+
+                    <div>
+                        <label class="modal-form-label" for="modalCatName">
+                            Kategori Adı <span style="color:var(--rose);">*</span>
+                        </label>
+                        <input type="text" id="modalCatName" name="CategoryName"
+                               class="modal-form-control"
+                               placeholder="Örn: Sedan, SUV, Elektrikli…"
+                               maxlength="50"
+                               oninput="updateModalCharCount(this)" />
+                        <div style="display:flex;justify-content:space-between;margin-top:5px;align-items:center;">
+                            <span id="modalNameError" style="display:none;font-size:12px;color:var(--rose);align-items:center;gap:4px;">
+                                <i class="fa-solid fa-circle-exclamation"></i> Kategori adı zorunludur.
+                            </span>
+                            <span style="font-size:11.5px;color:var(--text-muted);margin-left:auto;">
+                                <span id="modalCharCount">0</span> / 50
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="modal-form-label">Renk Etiketi</label>
+                        <div class="color-options">
+                            @{
+                                var dotColors = new[] {
+                                    ("#4f46e5","İndigo"), ("#059669","Yeşil"), ("#d97706","Amber"),
+                                    ("#e11d48","Kırmızı"), ("#9333ea","Mor"), ("#0284c7","Mavi"),
+                                    ("#db2777","Pembe"), ("#ea580c","Turuncu")
+                                };
+                            }
+                            @foreach (var (color, label) in dotColors)
+                            {
+                                <input type="radio" class="color-dot-radio"
+                                       name="ColorTag" id="color_@color.Replace("#","")"
+                                       value="@color" />
+                                <label for="color_@color.Replace("#","")"
+                                       style="background:@color;" title="@label"></label>
+                            }
+                        </div>
+                        <p style="font-size:11.5px;color:var(--text-muted);margin-top:8px;display:flex;align-items:center;gap:5px;">
+                            <i class="fa-solid fa-circle-info" style="color:var(--accent);font-size:11px;"></i>
+                            İsteğe bağlı — kategori için renk etiketi seçin.
+                        </p>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-xmark"></i> İptal
+                    </button>
+                    <button type="button" class="btn-modal-save" id="modalSaveBtn" onclick="submitCatModal()">
+                        <i class="fa-solid fa-check"></i>
+                        <span id="modalSaveBtnText">Kaydet</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SİL MODAL ═══ -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Kategori Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteCatName">bu kategoriyi</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">
+                            Bu işlem geri alınamaz. İlgili araçlar kategorisiz kalabilir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteCatId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    const allRows = () => [...document.querySelectorAll('#catTableBody tr[data-id]')];
+
+    function filterCategories() {
+        const q = document.getElementById('catSearch').value.toLowerCase().trim();
+        let visible = 0;
+        allRows().forEach(row => {
+            const show = !q || (row.dataset.name || '').includes(q) || row.dataset.id.includes(q);
+            row.setAttribute('data-filtered', show ? 'true' : 'false');
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        document.getElementById('statFiltered').textContent = visible;
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+        currentPage = 1;
+        buildPaging();
+    }
+
+    function sortCategories() {
+        const [field, dir] = document.getElementById('sortSelect').value.split('-');
+        sortBy(field, dir);
+    }
+
+    let lastSort = { field: 'id', dir: 'asc' };
+    function sortBy(field, dir) {
+        if (!dir) dir = (lastSort.field === field && lastSort.dir === 'asc') ? 'desc' : 'asc';
+        lastSort = { field, dir };
+
+        ['id','name'].forEach(f => {
+            const el = document.getElementById('sort-' + f);
+            if (!el) return;
+            el.className = f === field
+                ? ('fa-solid fa-sort-' + (dir === 'asc' ? 'up' : 'down') + ' sort-icon')
+                : 'fa-solid fa-sort sort-icon';
+            el.closest('th').classList.toggle('sorted', f === field);
+        });
+
+        const tbody = document.getElementById('catTableBody');
+        const rows  = allRows();
+        rows.sort((a, b) => {
+            let va = field === 'id' ? parseInt(a.dataset.id) : a.dataset.name;
+            let vb = field === 'id' ? parseInt(b.dataset.id) : b.dataset.name;
+            if (va < vb) return dir === 'asc' ? -1 : 1;
+            if (va > vb) return dir === 'asc' ?  1 : -1;
+            return 0;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+        buildPaging();
+    }
+
+    function resetCatFilters() {
+        document.getElementById('catSearch').value = '';
+        document.getElementById('sortSelect').value = 'id-asc';
+        allRows().forEach(r => { r.style.display = ''; r.setAttribute('data-filtered','true'); });
+        document.getElementById('statFiltered').textContent = allRows().length;
+        document.getElementById('emptyState').style.display = 'none';
+        sortBy('id', 'asc');
+        showToast('Filtreler sıfırlandı.', 'info');
+    }
+
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+
+    function buildPaging() {
+        const visible = allRows().filter(r => r.getAttribute('data-filtered') !== 'false');
+        const total   = visible.length;
+        const pages   = Math.max(1, Math.ceil(total / PAGE_SIZE));
+        if (currentPage > pages) currentPage = pages;
+
+        allRows().forEach(r => r.style.display = r.getAttribute('data-filtered') === 'false' ? 'none' : 'none');
+        visible.forEach((r, i) => {
+            r.style.display = (i >= (currentPage-1)*PAGE_SIZE && i < currentPage*PAGE_SIZE) ? '' : 'none';
+        });
+
+        const from = total === 0 ? 0 : (currentPage-1)*PAGE_SIZE+1;
+        const to   = Math.min(currentPage*PAGE_SIZE, total);
+        document.getElementById('pagingInfo').textContent = total > 0 ? `${from}–${to} / toplam ${total} kategori` : '0 kategori';
+
+        const btns = document.getElementById('pagingBtns');
+        btns.innerHTML = '';
+        const prev = makePageBtn('<i class="fa-solid fa-chevron-left" style="font-size:11px;"></i>', () => goPage(currentPage-1));
+        if (currentPage === 1) prev.disabled = true;
+        btns.appendChild(prev);
+        for (let p = 1; p <= pages; p++) {
+            const btn = makePageBtn(p, () => goPage(p));
+            if (p === currentPage) btn.classList.add('active');
+            btns.appendChild(btn);
+        }
+        const next = makePageBtn('<i class="fa-solid fa-chevron-right" style="font-size:11px;"></i>', () => goPage(currentPage+1));
+        if (currentPage === pages) next.disabled = true;
+        btns.appendChild(next);
+        document.getElementById('pagingWrap').style.display = total <= PAGE_SIZE && pages === 1 ? 'none' : 'flex';
+    }
+
+    function makePageBtn(html, fn) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'page-btn'; b.innerHTML = html;
+        b.addEventListener('click', fn); return b;
+    }
+
+    function goPage(p) {
+        const visible = allRows().filter(r => r.getAttribute('data-filtered') !== 'false');
+        const pages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+        currentPage = Math.max(1, Math.min(pages, p));
+        buildPaging();
+    }
+
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = 'Yeni Kategori Ekle';
+        document.getElementById('modalSaveBtnText').textContent = 'Kaydet';
+        document.getElementById('modalCatId').value = '0';
+        document.getElementById('modalCatName').value = '';
+        document.getElementById('modalCatName').classList.remove('is-invalid');
+        document.getElementById('modalNameError').style.display = 'none';
+        document.getElementById('modalCharCount').textContent = '0';
+        document.getElementById('catModalForm').action = '/Category/Create';
+        new bootstrap.Modal(document.getElementById('catModal')).show();
+        setTimeout(() => document.getElementById('modalCatName').focus(), 300);
+    }
+
+    function openEditModal(id, name) {
+        document.getElementById('modalTitle').textContent = 'Kategoriyi Düzenle';
+        document.getElementById('modalSaveBtnText').textContent = 'Güncelle';
+        document.getElementById('modalCatId').value = id;
+        document.getElementById('modalCatName').value = name;
+        document.getElementById('modalCatName').classList.remove('is-invalid');
+        document.getElementById('modalNameError').style.display = 'none';
+        document.getElementById('modalCharCount').textContent = name.length;
+        document.getElementById('catModalForm').action = '/Category/Edit';
+        new bootstrap.Modal(document.getElementById('catModal')).show();
+        setTimeout(() => document.getElementById('modalCatName').focus(), 300);
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById('deleteCatName').textContent = `"${name}"`;
+        document.getElementById('deleteCatId').value = id;
+        document.getElementById('deleteForm').action = `/Category/Delete/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function submitCatModal() {
+        const input = document.getElementById('modalCatName');
+        const err   = document.getElementById('modalNameError');
+        if (!input.value.trim()) {
+            input.classList.add('is-invalid');
+            err.style.display = 'flex';
+            input.focus(); return;
+        }
+        input.classList.remove('is-invalid');
+        err.style.display = 'none';
+        document.getElementById('catModalForm').submit();
+    }
+
+    function updateModalCharCount(el) {
+        document.getElementById('modalCharCount').textContent = el.value.length;
+        if (el.value.trim()) { el.classList.remove('is-invalid'); document.getElementById('modalNameError').style.display = 'none'; }
+    }
+
+    document.getElementById('modalCatName')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); submitCatModal(); }
+    });
+
+    function showToast(msg, type) {
+        const icons  = { success: 'fa-check-circle', info: 'fa-circle-info', danger: 'fa-triangle-exclamation' };
+        const colors = { success: '#10b981', info: 'var(--accent)', danger: '#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        allRows().forEach(r => r.setAttribute('data-filtered','true'));
+        buildPaging();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"] != null)   { <text>showToast('@TempData["Error"]', 'danger');</text> }
+    });
+    </script>
+}

@@ -1,0 +1,687 @@
+﻿@model Rentaly.EntityLayer.Entities.Brand
+@{
+    ViewData["Title"] = "CreateBrand";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+@section Styles {
+    <style>
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .create-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 22px;
+            align-items: start;
+            max-width: 860px;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg,var(--accent-lighter) 0%,var(--card-bg) 65%);
+        }
+
+        .form-card-header-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .form-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .form-card-subtitle {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .form-card-body {
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .f-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .f-label {
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .f-label i {
+                font-size: 11px;
+                color: var(--accent);
+            }
+
+        .required-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--rose);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 2px;
+        }
+
+        .f-wrap {
+            position: relative;
+        }
+
+        .f-ico {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: color var(--t-s);
+        }
+
+        .f-wrap:focus-within .f-ico {
+            color: var(--accent);
+        }
+
+        .f-input {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px 10px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .f-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .f-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        /* URL + test butonu */
+        .url-row {
+            display: flex;
+            gap: 8px;
+        }
+
+            .url-row .f-wrap {
+                flex: 1;
+            }
+
+        .btn-test {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent-lighter);
+            color: var(--accent);
+            border: 1.5px solid #c7d2fe;
+            cursor: pointer;
+            transition: all var(--t-s);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+            .btn-test:hover {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+            }
+
+        .field-error {
+            font-size: 12px;
+            color: var(--rose);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Logo önizleme kutusu */
+        .logo-preview-box {
+            display: none;
+            margin-top: 10px;
+            padding: 16px;
+            background: var(--page-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 100px;
+        }
+
+            .logo-preview-box img {
+                max-width: 120px;
+                max-height: 80px;
+                object-fit: contain;
+            }
+
+        .logo-preview-status {
+            font-size: 11.5px;
+        }
+
+        .form-card-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 11px 26px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+        }
+
+            .btn-submit:hover {
+                background: var(--accent-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel-link:hover {
+                border-color: #c7d2fe;
+                color: var(--accent);
+                background: var(--accent-lighter);
+            }
+
+        /* Right panel */
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: #fafbff;
+        }
+
+            .info-card-header i {
+                font-size: 13px;
+                color: var(--accent);
+            }
+
+        .info-card-title {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .info-card-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Canlı önizleme */
+        .preview-brand {
+            background: linear-gradient(135deg,var(--accent-lighter) 0%,#eef2ff 100%);
+            border: 1.5px dashed #c7d2fe;
+            border-radius: var(--radius);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+            transition: all var(--t);
+        }
+
+            .preview-brand.has-data {
+                border-style: solid;
+                border-color: var(--accent);
+            }
+
+        .preview-logo-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all var(--t-s);
+        }
+
+        .preview-brand.has-data .preview-logo-wrap {
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.15);
+        }
+
+        .preview-logo-wrap img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .preview-logo-ph {
+            font-size: 28px;
+            color: var(--accent);
+            opacity: 0.3;
+        }
+
+        .preview-brand-name {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+            .preview-brand-name.ph {
+                color: var(--text-muted);
+                font-style: italic;
+                font-weight: 400;
+                font-size: 13px;
+            }
+
+        /* Tips */
+        .tip-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .tip-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+            .tip-dot.blue {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+            .tip-dot.green {
+                background: #d1fae5;
+                color: #059669;
+            }
+
+            .tip-dot.amber {
+                background: #fef3c7;
+                color: #d97706;
+            }
+
+        .tip-text {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+            .tip-text strong {
+                color: var(--text-secondary);
+                font-weight: 700;
+            }
+
+        .required-note {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @@media (max-width:900px) {
+            .create-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-panel {
+                position: static;
+            }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Yeni Marka Ekle</h1>
+        <p class="page-desc">Araç filonuza yeni bir marka tanımlayın.</p>
+    </div>
+    <a href="/Brand/BrandList" class="btn-cancel-link">
+        <i class="fa-solid fa-arrow-left"></i> Marka Listesi
+    </a>
+</div>
+
+<div class="create-layout">
+    <div>
+        <form method="post" id="brandForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">
+                    <i class="fa-solid fa-circle-exclamation" style="color:var(--rose);font-size:15px;flex-shrink:0;margin-top:1px;"></i>
+                    <ul style="margin:0;padding-left:16px;">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li style="font-size:13px;color:#e11d48;margin-bottom:2px;">@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#059669;">
+                    <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+                </div>
+            }
+
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-header-icon"><i class="fa-solid fa-copyright"></i></div>
+                    <div>
+                        <div class="form-card-title">Marka Bilgileri</div>
+                        <div class="form-card-subtitle">Marka adı ve logo URL'sini girin.</div>
+                    </div>
+                </div>
+
+                <div class="form-card-body">
+                    <!-- BrandName -->
+                    <div class="f-group">
+                        <label asp-for="BrandName" class="f-label">
+                            <i class="fa-solid fa-tag"></i> Marka Adı <span class="required-dot"></span>
+                        </label>
+                        <div class="f-wrap">
+                            <input asp-for="BrandName" class="f-input"
+                                   placeholder="ör. Toyota, BMW, Mercedes…"
+                                   maxlength="50"
+                                   oninput="updatePreview()" autocomplete="off" />
+                            <i class="f-ico fa-solid fa-tag"></i>
+                        </div>
+                        <span asp-validation-for="BrandName" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                    </div>
+
+                    <!-- ImageUrl -->
+                    <div class="f-group">
+                        <label asp-for="ImageUrl" class="f-label">
+                            <i class="fa-solid fa-image"></i> Logo URL
+                        </label>
+                        <div class="url-row">
+                            <div class="f-wrap">
+                                <input asp-for="ImageUrl" class="f-input"
+                                       placeholder="ör. toyota.png veya https://…/logo.png"
+                                       oninput="updatePreview()" autocomplete="off" />
+                                <i class="f-ico fa-solid fa-link"></i>
+                            </div>
+                            <button type="button" class="btn-test" onclick="testLogo()">
+                                <i class="fa-solid fa-eye"></i> Test
+                            </button>
+                        </div>
+                        <span asp-validation-for="ImageUrl" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            PNG veya SVG formatı önerilir. Şeffaf arka planlı logo ideal görünür.
+                        </span>
+
+                        <!-- Logo test kutusu -->
+                        <div id="logoTestBox" style="display:none;margin-top:10px;padding:16px;background:var(--page-bg);border:1.5px solid var(--card-border);border-radius:var(--radius);display:none;flex-direction:column;align-items:center;gap:8px;">
+                            <img id="logoTestImg" src="" alt="Logo"
+                                 style="max-width:120px;max-height:80px;object-fit:contain;" />
+                            <span id="logoTestMsg" style="font-size:11.5px;color:var(--text-muted);">Yükleniyor…</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card-footer">
+                    <a href="/Brand/BrandList" class="btn-cancel-link">
+                        <i class="fa-solid fa-xmark"></i> Vazgeç
+                    </a>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> Markayı Kaydet
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sağ Panel -->
+    <div class="info-panel">
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-eye"></i>
+                <div class="info-card-title">Canlı Önizleme</div>
+            </div>
+            <div class="info-card-body">
+                <div class="preview-brand" id="previewBrand">
+                    <div class="preview-logo-wrap">
+                        <span class="preview-logo-ph" id="previewPh"><i class="fa-solid fa-copyright"></i></span>
+                        <img id="previewImg" src="" alt="" style="display:none;" onerror="logoError()" />
+                    </div>
+                    <div class="preview-brand-name ph" id="previewName">Marka adı girilmedi…</div>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);text-align:center;margin:0;">
+                    Formu doldurdukça önizleme güncellenir.
+                </p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-lightbulb"></i>
+                <div class="info-card-title">İpuçları</div>
+            </div>
+            <div class="info-card-body">
+                <div class="tip-item">
+                    <div class="tip-dot blue"><i class="fa-solid fa-tag"></i></div>
+                    <div class="tip-text"><strong>Marka Adı</strong> tam ve doğru yazılmalı. Araç listesinde bu isim görünür.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot green"><i class="fa-solid fa-image"></i></div>
+                    <div class="tip-text"><strong>Logo</strong> şeffaf arka planlı PNG/SVG idealdir. Test butonuyla kontrol edin.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot amber"><i class="fa-solid fa-copyright"></i></div>
+                    <div class="tip-text">Marka eklendikten sonra modeller bu markaya bağlı olarak tanımlanabilir.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="required-note">
+            <span class="required-dot"></span>
+            işaretli alanlar zorunludur.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updatePreview() {
+            const name = document.getElementById('BrandName').value.trim();
+            const imgUrl = document.getElementById('ImageUrl').value.trim();
+            const card = document.getElementById('previewBrand');
+            const pName = document.getElementById('previewName');
+            const pImg = document.getElementById('previewImg');
+            const pPh = document.getElementById('previewPh');
+
+            card.classList.toggle('has-data', !!(name || imgUrl));
+
+            if (name) { pName.textContent = name; pName.classList.remove('ph'); }
+            else { pName.textContent = 'Marka adı girilmedi…'; pName.classList.add('ph'); }
+
+            if (imgUrl) {
+                pImg.src = imgUrl; pImg.style.display = 'block'; pPh.style.display = 'none';
+                pImg.onerror = logoError;
+            } else {
+                pImg.style.display = 'none'; pPh.style.display = 'block';
+            }
+        }
+
+        function testLogo() {
+            const url = document.getElementById('ImageUrl').value.trim();
+            const box = document.getElementById('logoTestBox');
+            const img = document.getElementById('logoTestImg');
+            const msg = document.getElementById('logoTestMsg');
+            if (!url) { box.style.display = 'none'; return; }
+            img.src = url; box.style.display = 'flex';
+            msg.textContent = 'Yükleniyor…'; msg.style.color = 'var(--text-muted)';
+            img.onload = () => { msg.textContent = 'Logo yüklendi ✓'; msg.style.color = '#10b981'; };
+            img.onerror = () => { msg.textContent = 'Logo yüklenemedi — URL kontrol edin.'; msg.style.color = '#f43f5e'; };
+        }
+
+        function logoError() {
+            document.getElementById('previewImg').style.display = 'none';
+            document.getElementById('previewPh').style.display = 'block';
+        }
+
+        document.getElementById('brandForm').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor…';
+        });
+    </script>
+}
+
+
+
+

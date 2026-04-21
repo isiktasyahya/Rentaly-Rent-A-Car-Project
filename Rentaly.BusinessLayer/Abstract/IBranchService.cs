@@ -1,0 +1,15 @@
+﻿using Rentaly.DtoLayer.BranchDtos;
+using Rentaly.EntityLayer.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rentaly.BusinessLayer.Abstract
+{
+    public interface IBranchService:IGenericService<Branch>
+    {
+        Branch TGetBranchWithCars(int id);
+    }
+}

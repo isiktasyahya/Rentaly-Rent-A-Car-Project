@@ -1,0 +1,824 @@
+﻿@model Rentaly.EntityLayer.Entities.About
+
+@{
+    ViewData["Title"] = "UpdateAbout";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+@section Styles {
+    <style>
+        /* ══════════════════════════════════════════
+           ABOUT CREATE — Indigo Daylight Theme
+        ══════════════════════════════════════════ */
+
+        .create-layout {
+            display: grid;
+            grid-template-columns: 1fr 310px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, var(--card-bg) 65%);
+        }
+
+        .form-card-header-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .form-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .form-card-subtitle {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .form-card-body {
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: -8px;
+        }
+
+            .section-label::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--card-border);
+            }
+
+        .f-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .f-label {
+            font-family: var(--font-display);
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .f-lbl-ico {
+            font-size: 12px;
+            color: var(--accent);
+            width: 16px;
+            text-align: center;
+            transition: color var(--t-s);
+        }
+
+        .required-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--rose);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 2px;
+            flex-shrink: 0;
+        }
+
+        .f-wrap {
+            position: relative;
+        }
+
+        .f-ico {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: color var(--t-s);
+        }
+
+            .f-ico.top {
+                top: 13px;
+                transform: none;
+            }
+
+        .f-wrap:focus-within .f-ico {
+            color: var(--accent);
+        }
+
+        .f-input {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px 10px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+            width: 100%;
+        }
+
+            .f-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .f-input::placeholder {
+                color: var(--text-muted);
+            }
+
+            .f-input.input-validation-error {
+                border-color: var(--rose);
+            }
+
+        textarea.f-input {
+            resize: vertical;
+            min-height: 200px;
+            line-height: 1.75;
+            padding-top: 12px;
+        }
+
+        /* Yazı istatistikleri (textarea altı) */
+        .text-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: -2px;
+            flex-wrap: wrap;
+        }
+
+        .text-stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            background: var(--page-bg);
+            border: 1px solid var(--card-border);
+            padding: 4px 10px;
+            border-radius: 99px;
+            transition: all var(--t-s);
+        }
+
+            .text-stat-pill.warn {
+                border-color: #fde68a;
+                color: #d97706;
+                background: #fefce8;
+            }
+
+            .text-stat-pill.danger {
+                border-color: #fecdd3;
+                color: #e11d48;
+                background: #fff1f2;
+            }
+
+            .text-stat-pill i {
+                font-size: 10px;
+            }
+
+        .field-error {
+            font-size: 12px;
+            color: var(--rose);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Form Footer */
+        .form-card-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 11px 26px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+        }
+
+            .btn-submit:hover {
+                background: var(--accent-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel-link:hover {
+                border-color: #c7d2fe;
+                color: var(--accent);
+                background: var(--accent-lighter);
+            }
+
+        /* ── Right Panel ── */
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: #fafbff;
+        }
+
+            .info-card-header i {
+                font-size: 13px;
+                color: var(--accent);
+            }
+
+        .info-card-title {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .info-card-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Canlı Önizleme */
+        .preview-about {
+            background: var(--card-bg);
+            border: 1.5px dashed #c7d2fe;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all var(--t);
+        }
+
+            .preview-about.has-data {
+                border-style: solid;
+                border-color: var(--accent);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.08);
+            }
+
+        .preview-stripe {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #818cf8);
+            opacity: 0;
+            transition: opacity var(--t);
+        }
+
+        .preview-about.has-data .preview-stripe {
+            opacity: 1;
+        }
+
+        .preview-header {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(199,210,254,0.4);
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, #fff 80%);
+        }
+
+        .preview-num {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+        }
+
+        .preview-title-text {
+            font-family: var(--font-display);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+            .preview-title-text.ph {
+                color: var(--text-muted);
+                font-style: italic;
+                font-weight: 400;
+                font-family: var(--font-body);
+                font-size: 12.5px;
+            }
+
+        .preview-body {
+            padding: 14px 16px;
+            position: relative;
+        }
+
+        .preview-quote {
+            position: absolute;
+            top: 6px;
+            right: 12px;
+            font-size: 36px;
+            color: var(--accent-lighter);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .preview-desc-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+            .preview-desc-text.ph {
+                color: var(--text-muted);
+                font-style: italic;
+            }
+
+        .preview-stats {
+            padding: 10px 16px;
+            border-top: 1px solid rgba(199,210,254,0.3);
+            background: #fafbff;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .p-stat-pill {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            background: var(--page-bg);
+            border: 1px solid var(--card-border);
+            padding: 3px 9px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+            .p-stat-pill i {
+                font-size: 9px;
+                color: var(--accent);
+            }
+
+        /* Tips */
+        .tip-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .tip-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+            .tip-dot.blue {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+            .tip-dot.green {
+                background: #d1fae5;
+                color: #059669;
+            }
+
+            .tip-dot.amber {
+                background: #fef3c7;
+                color: #d97706;
+            }
+
+        .tip-text {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+            .tip-text strong {
+                color: var(--text-secondary);
+                font-weight: 700;
+            }
+
+        .required-note {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @@media (max-width: 900px) {
+            .create-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-panel {
+                position: static;
+            }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Hakkımızda İçeriği Güncelleme Sayfası</h1>
+        <p class="page-desc">Ana sayfada gösteriliyor olan hakkımızda içeriğini güncelleyin.</p>
+    </div>
+    <a href="/About/AboutList/" class="btn-cancel-link">
+        <i class="fa-solid fa-arrow-left"></i> İçerik Listesi
+    </a>
+</div>
+
+<div class="create-layout">
+
+    <!-- ════ Sol: Form ════ -->
+    <div>
+        <form method="post" id="aboutForm" asp-controller="About" asp-action="UpdateAbout" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="AboutId" />
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-header-icon">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <div>
+                        <div class="form-card-title">Hakkımızda İçeriği</div>
+                        <div class="form-card-subtitle">Aşağıdaki alanları eksiksiz doldurun.</div>
+                    </div>
+                </div>
+
+                <div class="form-card-body">
+
+                    <div class="section-label">
+                        <i class="fa-solid fa-circle-info" style="font-size:10px;color:var(--accent);"></i>
+                        İçerik Bilgileri
+                    </div>
+
+                    <!-- Title -->
+                    <div class="f-group">
+                        <label class="f-label" for="Title">
+                            <i class="f-lbl-ico fa-solid fa-heading"></i>
+                            Başlık
+                            <span class="required-dot"></span>
+                        </label>
+                        <div class="f-wrap">
+                            <input asp-for="Title"
+                                   class="f-input"
+                                   placeholder="ör. Biz Kimiz?, Misyonumuz, Vizyonumuz…"
+                                   maxlength="150"
+                                   oninput="updatePreview(); countTitle(this)"
+                                   autocomplete="off" />
+                            <i class="f-ico fa-solid fa-heading"></i>
+                        </div>
+                        <div class="text-stats">
+                            <span class="text-stat-pill" id="titlePill">
+                                <i class="fa-solid fa-font"></i>
+                                <span id="titleCharCount">0</span> / 150 karakter
+                            </span>
+                        </div>
+                        <span asp-validation-for="Title" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Kısa ve özlü bir başlık — 5-8 kelime idealdir.
+                        </span>
+                    </div>
+
+                    <!-- Decription (entity'de yazım hatası var, olduğu gibi bırakıyoruz) -->
+                    <div class="f-group">
+                        <label class="f-label" for="Decription">
+                            <i class="f-lbl-ico fa-solid fa-align-left"></i>
+                            İçerik
+                            <span class="required-dot"></span>
+                        </label>
+                        <div class="f-wrap">
+                            <textarea asp-for="Decription"
+                                      class="f-input"
+                                      rows="8"
+                                      placeholder="Şirketiniz, misyonunuz veya sunduğunuz hizmetler hakkında detaylı bilgi verin…"
+                                      maxlength="2000"
+                                      oninput="updatePreview(); countDesc(this)"></textarea>
+                            <i class="f-ico top fa-solid fa-align-left"></i>
+                        </div>
+                        <div class="text-stats">
+                            <span class="text-stat-pill" id="descCharPill">
+                                <i class="fa-solid fa-font"></i>
+                                <span id="descCharCount">0</span> / 2000 karakter
+                            </span>
+                            <span class="text-stat-pill" id="descWordPill">
+                                <i class="fa-solid fa-w"></i>
+                                <span id="descWordCount">0</span> kelime
+                            </span>
+                        </div>
+                        <span asp-validation-for="Decription" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Müşteri odaklı, sıcak bir dille yazın. 100-300 kelime idealdir.
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="form-card-footer">
+                    <a href="/About/Index" class="btn-cancel-link">
+                        <i class="fa-solid fa-xmark"></i> Vazgeç
+                    </a>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> İçeriği Güncelle
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ════ Sağ: Panel ════ -->
+    <div class="info-panel">
+
+        <!-- Canlı Önizleme -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-eye"></i>
+                <div class="info-card-title">Canlı Önizleme</div>
+            </div>
+            <div class="info-card-body" style="padding:12px;">
+                <div class="preview-about" id="previewCard">
+                    <div class="preview-stripe"></div>
+                    <div class="preview-header">
+                        <div class="preview-num">1</div>
+                        <div>
+                            <div style="font-size:10px;color:var(--accent);font-weight:700;background:var(--accent-lighter);border:1px solid #c7d2fe;padding:1px 7px;border-radius:99px;display:inline-block;margin-bottom:4px;"># Yeni</div>
+                            <div class="preview-title-text ph" id="previewTitle">Başlık girilmedi…</div>
+                        </div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-quote">"</div>
+                        <div class="preview-desc-text ph" id="previewDesc">İçerik girilmedi…</div>
+                    </div>
+                    <div class="preview-stats">
+                        <span class="p-stat-pill" id="previewWordCount">
+                            <i class="fa-solid fa-w"></i> 0 kelime
+                        </span>
+                        <span class="p-stat-pill" id="previewCharCount">
+                            <i class="fa-solid fa-font"></i> 0 karakter
+                        </span>
+                    </div>
+                </div>
+                <p style="font-size:11px;color:var(--text-muted);text-align:center;margin:8px 0 0;">Yazdıkça önizleme güncellenir.</p>
+            </div>
+        </div>
+
+        <!-- İpuçları -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-lightbulb"></i>
+                <div class="info-card-title">Yazım İpuçları</div>
+            </div>
+            <div class="info-card-body">
+                <div class="tip-item">
+                    <div class="tip-dot blue"><i class="fa-solid fa-heading"></i></div>
+                    <div class="tip-text"><strong>Başlık</strong> kısa ve merak uyandırıcı olmalı. "Biz Kimiz?" veya "Misyonumuz" gibi.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot green"><i class="fa-solid fa-pen"></i></div>
+                    <div class="tip-text"><strong>İçerik</strong> müşteri perspektifinden yazılmalı. "Siz" diline odaklanın.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot amber"><i class="fa-solid fa-w"></i></div>
+                    <div class="tip-text">100-300 kelime arası idealdir. Çok uzun metinler okunmayabilir.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="required-note">
+            <span class="required-dot"></span>
+            işaretli alanlar zorunludur.
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updatePreview() {
+            const title = document.getElementById('Title').value.trim();
+            const desc = document.getElementById('Decription').value.trim();
+
+            const card = document.getElementById('previewCard');
+            const pTitle = document.getElementById('previewTitle');
+            const pDesc = document.getElementById('previewDesc');
+            const pWords = document.getElementById('previewWordCount');
+            const pChars = document.getElementById('previewCharCount');
+
+            card.classList.toggle('has-data', !!(title || desc));
+
+            if (title) { pTitle.textContent = title; pTitle.classList.remove('ph'); }
+            else { pTitle.textContent = 'Başlık girilmedi…'; pTitle.classList.add('ph'); }
+
+            if (desc) {
+                pDesc.textContent = desc.length > 200 ? desc.substring(0, 197) + '…' : desc;
+                pDesc.classList.remove('ph');
+            } else {
+                pDesc.textContent = 'İçerik girilmedi…';
+                pDesc.classList.add('ph');
+            }
+
+            const words = desc ? desc.split(/\s+/).filter(Boolean).length : 0;
+            const chars = desc.length;
+            pWords.innerHTML = `<i class="fa-solid fa-w" style="font-size:9px;color:var(--accent);"></i> ${words} kelime`;
+            pChars.innerHTML = `<i class="fa-solid fa-font" style="font-size:9px;color:var(--accent);"></i> ${chars} karakter`;
+        }
+
+        function countTitle(el) {
+            const len = el.value.length;
+            const pill = document.getElementById('titlePill');
+            const span = document.getElementById('titleCharCount');
+            span.textContent = len;
+            pill.className = 'text-stat-pill' + (len > 120 ? ' warn' : '') + (len > 140 ? ' danger' : '');
+        }
+
+        function countDesc(el) {
+            const len = el.value.length;
+            const words = el.value.trim() ? el.value.trim().split(/\s+/).filter(Boolean).length : 0;
+
+            const charPill = document.getElementById('descCharPill');
+            const wordPill = document.getElementById('descWordPill');
+            document.getElementById('descCharCount').textContent = len;
+            document.getElementById('descWordCount').textContent = words;
+
+            charPill.className = 'text-stat-pill' + (len > 1600 ? ' warn' : '') + (len > 1900 ? ' danger' : '');
+            wordPill.className = 'text-stat-pill' + (words > 250 ? ' warn' : '') + (words > 350 ? ' danger' : '');
+        }
+
+        document.getElementById('aboutForm').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor…';
+        });
+
+        document.querySelectorAll('.f-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                const ico = input.closest('.f-group')?.querySelector('.f-lbl-ico');
+                if (ico) ico.style.color = 'var(--accent)';
+            });
+            input.addEventListener('blur', () => {
+                const ico = input.closest('.f-group')?.querySelector('.f-lbl-ico');
+                if (ico) ico.style.color = '';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePreview();
+            const titleEl = document.getElementById('Title');
+            const descEl = document.getElementById('Decription');
+            if (titleEl?.value) countTitle(titleEl);
+            if (descEl?.value) countDesc(descEl);
+        });</script>
+}
+
+
+
+

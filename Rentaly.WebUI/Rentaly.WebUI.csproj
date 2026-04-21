@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.12" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
+    <PackageReference Include="X.PagedList" Version="10.5.9" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rentaly.BusinessLayer\Rentaly.BusinessLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\RentalyTema\vendor\FormGuide\PHPFormValidator\tests\" />
+    <Folder Include="wwwroot\RentalyTema\vendor\phpmailer\phpmailer\examples\" />
+    <Folder Include="wwwroot\RentalyTema\vendor\phpmailer\phpmailer\language\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\RentalyTema\fonts\et-line-font\.DS_Store" />
+    <None Include="wwwroot\RentalyTema\fonts\et-line-font\fonts\.DS_Store" />
+    <None Include="wwwroot\RentalyTema\vendor\phpmailer\phpmailer\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\RentalyTema\vendor\phpmailer\phpmailer\.github\PULL_REQUEST_TEMPLATE.md" />
+  </ItemGroup>
+
+</Project>

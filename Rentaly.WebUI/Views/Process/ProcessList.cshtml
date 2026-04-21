@@ -1,0 +1,1083 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Process>
+
+@{
+    ViewData["Title"] = "ProcessList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+
+@section Styles {
+    <style>
+        /* ══════════════════════════════════════════
+           PROCESS LIST — Indigo Daylight Theme
+           Timeline + Card hybrid layout
+        ══════════════════════════════════════════ */
+
+        /* ── Page Header ── */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ── Stat Row ── */
+        .process-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .p-stat {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .p-stat::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .p-stat:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .p-stat:hover::after {
+                    opacity: 1;
+                }
+
+            .p-stat.indigo::after {
+                background: var(--accent);
+            }
+
+            .p-stat.emerald::after {
+                background: var(--emerald);
+            }
+
+            .p-stat.amber::after {
+                background: var(--amber);
+            }
+
+        .p-stat-ico {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .p-stat-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .p-stat-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        /* ── Toolbar ── */
+        .process-toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+            .search-wrap i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .search-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .search-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .search-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .view-toggle {
+            display: flex;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--page-bg);
+        }
+
+        .view-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--t-s);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+            .view-btn.active {
+                background: var(--accent);
+                color: #fff;
+            }
+
+            .view-btn:hover:not(.active) {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+        .btn-primary-rc {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-primary-rc:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        /* ══════════════════════════════════════════
+           TIMELINE VIEW (default)
+        ══════════════════════════════════════════ */
+        .process-timeline {
+            position: relative;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+            /* Vertical line */
+            .process-timeline::before {
+                content: '';
+                position: absolute;
+                left: 31px;
+                top: 24px;
+                bottom: 24px;
+                width: 2px;
+                background: linear-gradient(180deg, var(--accent) 0%, #c7d2fe 60%, transparent 100%);
+                border-radius: 2px;
+                z-index: 0;
+            }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+            .timeline-item:last-child {
+                margin-bottom: 0;
+            }
+
+        /* Step number bubble */
+        .timeline-step {
+            width: 64px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-bubble {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 4px var(--page-bg), 0 0 0 6px rgba(79,70,229,0.2);
+            transition: all var(--t-s);
+        }
+
+        .timeline-item:hover .step-bubble {
+            box-shadow: 0 0 0 4px var(--page-bg), 0 0 0 6px rgba(79,70,229,0.4);
+            transform: scale(1.08);
+        }
+
+        /* Card */
+        .timeline-card {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all var(--t);
+            position: relative;
+        }
+
+            .timeline-card::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 3px;
+                background: linear-gradient(180deg, var(--accent) 0%, #818cf8 100%);
+                border-radius: 0;
+                transition: width var(--t-s);
+            }
+
+            .timeline-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                border-color: #c7d2fe;
+                transform: translateX(3px);
+            }
+
+                .timeline-card:hover::before {
+                    width: 4px;
+                }
+
+        .timeline-card-inner {
+            padding: 18px 20px 18px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--accent-lighter);
+            color: var(--accent-text);
+            border: 1px solid #c7d2fe;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 99px;
+            font-family: var(--font-display);
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 15.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-desc {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            align-items: flex-start;
+            padding-top: 2px;
+        }
+
+        /* ══════════════════════════════════════════
+           GRID VIEW
+        ══════════════════════════════════════════ */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .grid-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all var(--t);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+            .grid-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-3px);
+                border-color: #c7d2fe;
+            }
+
+        /* Top gradient bar */
+        .grid-card-top {
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, #eef2ff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-bottom: 1px solid var(--card-border);
+            flex-shrink: 0;
+        }
+
+        .grid-step-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 800;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+            transition: all var(--t-s);
+        }
+
+        .grid-card:hover .grid-step-circle {
+            transform: scale(1.08);
+            box-shadow: 0 6px 24px rgba(79,70,229,0.45);
+        }
+
+        /* Connector dots top-right */
+        .grid-card-top .connector {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .connector-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(79,70,229,0.25);
+        }
+
+        .grid-card-body {
+            padding: 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .grid-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .grid-card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            flex: 1;
+        }
+
+        .grid-card-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            gap: 7px;
+        }
+
+        /* ── Shared Action Buttons ── */
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+            flex: 1;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            padding: 7px 10px;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* ── Drag handle ── */
+        .drag-handle {
+            padding: 7px 8px;
+            color: var(--text-muted);
+            cursor: grab;
+            border-radius: var(--radius-sm);
+            transition: all var(--t-s);
+            font-size: 14px;
+            border: 1.5px solid transparent;
+            background: transparent;
+            display: flex;
+            align-items: center;
+        }
+
+            .drag-handle:hover {
+                background: var(--accent-lighter);
+                color: var(--accent);
+                border-color: #c7d2fe;
+            }
+
+        /* ── Empty State ── */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .empty-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+
+        /* ── Delete Modal ── */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                box-shadow: 0 4px 16px rgba(244,63,94,0.35);
+                transform: translateY(-1px);
+            }
+
+        /* ── Toast ── */
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Entry animations */
+        .timeline-item {
+            animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        .grid-card {
+            animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+        @@keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-item:nth-child(1), .grid-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .timeline-item:nth-child(2), .grid-card:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+
+        .timeline-item:nth-child(3), .grid-card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .timeline-item:nth-child(4), .grid-card:nth-child(4) {
+            animation-delay: 0.20s;
+        }
+
+        .timeline-item:nth-child(5), .grid-card:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+
+        .timeline-item:nth-child(6), .grid-card:nth-child(6) {
+            animation-delay: 0.30s;
+        }
+
+        @@media (max-width: 640px) {
+            .process-timeline::before {
+                left: 27px;
+            }
+
+            .timeline-step {
+                width: 56px;
+            }
+
+            .step-bubble {
+                width: 34px;
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<!-- ═══ Page Header ═══ -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Süreç</h1>
+        <p class="page-desc">Müşteri deneyim akışını yönetin ve düzenleyin.</p>
+    </div>
+    <a href="/Process/CreateProcess/" class="btn-primary-rc">
+        <i class="fa-solid fa-plus"></i> Yeni Adım Ekle
+    </a>
+</div>
+
+<!-- ═══ Stat Cards ═══ -->
+<div class="process-stats">
+    <div class="p-stat indigo">
+        <div class="p-stat-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-list-ol"></i>
+        </div>
+        <div>
+            <div class="p-stat-val">@Model.Count()</div>
+            <div class="p-stat-lbl">Toplam Adım</div>
+        </div>
+    </div>
+    <div class="p-stat emerald">
+        <div class="p-stat-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+            <div class="p-stat-val" style="color:#059669;">@Model.Count()</div>
+            <div class="p-stat-lbl">Aktif Adım</div>
+        </div>
+    </div>
+    <div class="p-stat amber">
+        <div class="p-stat-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-route"></i>
+        </div>
+        <div>
+            <div class="p-stat-val" style="color:#d97706;font-size:15px;">
+                @(Model.Any() ? Model.Last().ProcessTitle?.Split(' ').FirstOrDefault() ?? "—" : "—")
+            </div>
+            <div class="p-stat-lbl">Son Adım</div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Toolbar ═══ -->
+<div class="process-toolbar">
+    <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="search-input" id="processSearch"
+               placeholder="Adım başlığı veya açıklama ara…"
+               oninput="filterProcesses()" />
+    </div>
+
+    <div class="view-toggle">
+        <button class="view-btn active" id="btnTimeline" onclick="setView('timeline')" title="Timeline Görünümü">
+            <i class="fa-solid fa-stream"></i>
+        </button>
+        <button class="view-btn" id="btnGrid" onclick="setView('grid')" title="Grid Görünümü">
+            <i class="fa-solid fa-grip"></i>
+        </button>
+    </div>
+</div>
+
+<!-- ═══ TIMELINE VIEW ═══ -->
+<div class="process-timeline" id="timelineView">
+    @if (Model.Any())
+    {
+        int step = 1;
+        foreach (var process in Model)
+        {
+            <div class="timeline-item"
+                 data-title="@process.ProcessTitle?.ToLower()"
+                 data-desc="@process.ProcessDescription?.ToLower()">
+
+                <!-- Step Bubble -->
+                <div class="timeline-step">
+                    <div class="step-bubble">@step</div>
+                </div>
+
+                <!-- Card -->
+                <div class="timeline-card">
+                    <div class="timeline-card-inner">
+                        <div class="card-content">
+                            <div class="card-step-badge">
+                                <i class="fa-solid fa-flag" style="font-size:9px;"></i>
+                                Adım @step
+                            </div>
+                            <div class="card-title">@process.ProcessTitle</div>
+                            <div class="card-desc">@process.ProcessDescription</div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="drag-handle" title="Sırayı değiştir">
+                                <i class="fa-solid fa-grip-vertical"></i>
+                            </button>
+                            <a href="/Process/UpdateProcess/@process.ProcessId" class="tbl-btn tbl-btn-edit" style="flex:none;padding:7px 10px;">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="/Process/DeleteProcess/@process.ProcessId"
+                               class="tbl-btn tbl-btn-delete"
+                               style="flex:none;padding:7px 10px;"
+                               onclick="return confirm('Bu adımı silmek istediğinize emin misiniz?')">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            step++;
+        }
+    }
+</div>
+
+<!-- ═══ GRID VIEW ═══ -->
+<div class="process-grid" id="gridView" style="display:none;">
+    @if (Model.Any())
+    {
+        int gStep = 1;
+        foreach (var process in Model)
+        {
+            <div class="grid-card"
+                 data-title="@process.ProcessTitle?.ToLower()"
+                 data-desc="@process.ProcessDescription?.ToLower()">
+
+                <div class="grid-card-top">
+                    <div class="grid-step-circle">@gStep</div>
+                    <div class="connector">
+                        <div class="connector-dot"></div>
+                        <div class="connector-dot"></div>
+                        <div class="connector-dot"></div>
+                    </div>
+                </div>
+
+                <div class="grid-card-body">
+                    <div class="card-step-badge" style="align-self:flex-start;">
+                        <i class="fa-solid fa-flag" style="font-size:9px;"></i>
+                        Adım @gStep
+                    </div>
+                    <div class="grid-card-title">@process.ProcessTitle</div>
+                    <div class="grid-card-desc">@process.ProcessDescription</div>
+                </div>
+
+                <div class="grid-card-footer">
+                    <a href="/Process/Edit/@gStep" class="tbl-btn tbl-btn-edit">
+                        <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                    </a>
+                    <button class="tbl-btn tbl-btn-delete"
+                            onclick="openDeleteModal(@gStep, '@process.ProcessTitle')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+            gStep++;
+        }
+    }
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-route"></i></div>
+    <div class="empty-title">Adım Bulunamadı</div>
+    <p class="empty-desc">Arama kriterinizle eşleşen adım yok.</p>
+    <button class="btn-primary-rc" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<!-- ═══ DELETE MODAL ═══ -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Adımı Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteProcessTitle">bu adımı</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">
+                            Bu işlem geri alınamaz. Adım sıralama değişebilir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteProcessId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    let currentView = 'timeline';
+
+    function setView(v) {
+        currentView = v;
+        document.getElementById('timelineView').style.display = v === 'timeline' ? 'block' : 'none';
+        document.getElementById('gridView').style.display = v === 'grid' ? 'grid' : 'none';
+        document.getElementById('btnTimeline').classList.toggle('active', v === 'timeline');
+        document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+        filterProcesses();
+    }
+
+    function filterProcesses() {
+        const q = document.getElementById('processSearch').value.toLowerCase().trim();
+
+        const timelineItems = [...document.querySelectorAll('#timelineView .timeline-item')];
+        const gridCards     = [...document.querySelectorAll('#gridView .grid-card')];
+
+        const matchItem = (el) => {
+            if (!q) return true;
+            return (el.dataset.title || '').includes(q) || (el.dataset.desc || '').includes(q);
+        };
+
+        let visibleCount = 0;
+
+        timelineItems.forEach(el => {
+            const show = matchItem(el);
+            el.style.display = show ? '' : 'none';
+            if (show) visibleCount++;
+        });
+
+        gridCards.forEach(el => {
+            el.style.display = matchItem(el) ? '' : 'none';
+        });
+
+        document.getElementById('emptyState').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('processSearch').value = '';
+        filterProcesses();
+    }
+
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteProcessTitle').textContent = `"${title}"`;
+        document.getElementById('deleteProcessId').value = id;
+        document.getElementById('deleteForm').action = `/Process/Delete/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success: 'fa-check-circle', info: 'fa-circle-info', danger: 'fa-triangle-exclamation' };
+        const colors = { success: '#10b981', info: 'var(--accent)', danger: '#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterProcesses();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"] != null)   { <text>showToast('@TempData["Error"]', 'danger');</text> }
+    });
+    </script>
+}
+
+

@@ -1,0 +1,894 @@
+﻿@model Rentaly.EntityLayer.Entities.Feature
+
+@{
+    ViewData["Title"] = "CreateFeature";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+
+@section Styles {
+    <style>
+        /* ══════════════════════════════════════════
+           FEATURE CREATE — Indigo Daylight Theme
+        ══════════════════════════════════════════ */
+
+        .create-layout {
+            display: grid;
+            grid-template-columns: 1fr 310px;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, var(--card-bg) 65%);
+        }
+
+        .form-card-header-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .form-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .form-card-subtitle {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .form-card-body {
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: -8px;
+        }
+
+            .section-label::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: var(--card-border);
+            }
+
+        /* Form elemanları */
+        .f-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .f-label {
+            font-family: var(--font-display);
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .f-lbl-ico {
+            font-size: 12px;
+            color: var(--accent);
+            width: 16px;
+            text-align: center;
+            transition: color var(--t-s);
+        }
+
+        .required-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--rose);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 2px;
+            flex-shrink: 0;
+        }
+
+        .f-wrap {
+            position: relative;
+        }
+
+        .f-ico {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            pointer-events: none;
+            transition: color var(--t-s);
+        }
+
+            .f-ico.top {
+                top: 13px;
+                transform: none;
+            }
+
+        .f-wrap:focus-within .f-ico {
+            color: var(--accent);
+        }
+
+        .f-input {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px 10px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+            width: 100%;
+        }
+
+            .f-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .f-input::placeholder {
+                color: var(--text-muted);
+            }
+
+            .f-input.input-validation-error {
+                border-color: var(--rose);
+            }
+
+        textarea.f-input {
+            resize: vertical;
+            min-height: 110px;
+            line-height: 1.65;
+            padding-top: 11px;
+        }
+
+        /* IconUrl özel - preview butonu */
+        .icon-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+            .icon-input-group .f-wrap {
+                flex: 1;
+            }
+
+        .btn-preview-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent-lighter);
+            color: var(--accent);
+            border: 1.5px solid #c7d2fe;
+            cursor: pointer;
+            transition: all var(--t-s);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+            .btn-preview-icon:hover {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+            }
+
+        .char-counter {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -4px;
+        }
+
+            .char-counter.warn {
+                color: var(--amber);
+            }
+
+            .char-counter.danger {
+                color: var(--rose);
+            }
+
+        .field-error {
+            font-size: 12px;
+            color: var(--rose);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-divider {
+            border: none;
+            border-top: 1px dashed var(--card-border);
+            margin: 2px 0;
+        }
+
+        /* Form Footer */
+        .form-card-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 11px 26px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-display);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+        }
+
+            .btn-submit:hover {
+                background: var(--accent-hover);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel-link:hover {
+                border-color: #c7d2fe;
+                color: var(--accent);
+                background: var(--accent-lighter);
+            }
+
+        /* ── Right Panel ── */
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: sticky;
+            top: 24px;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+        }
+
+        .info-card-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: #fafbff;
+        }
+
+            .info-card-header i {
+                font-size: 13px;
+                color: var(--accent);
+            }
+
+        .info-card-title {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .info-card-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Canlı Önizleme — özellik kartı gibi görünür */
+        .preview-feature {
+            background: linear-gradient(135deg, var(--accent-lighter) 0%, #eef2ff 100%);
+            border: 1.5px dashed #c7d2fe;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all var(--t);
+        }
+
+            .preview-feature.has-data {
+                border-style: solid;
+                border-color: var(--accent);
+            }
+
+        .preview-top {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), #818cf8);
+            opacity: 0;
+            transition: opacity var(--t);
+        }
+
+        .preview-feature.has-data .preview-top {
+            opacity: 1;
+        }
+
+        .preview-header {
+            padding: 16px 16px 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border-bottom: 1px solid rgba(199,210,254,0.5);
+        }
+
+        .preview-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: all var(--t-s);
+        }
+
+        .preview-feature.has-data .preview-icon-box {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .preview-icon-box img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            transition: filter var(--t-s);
+        }
+
+        .preview-feature.has-data .preview-icon-box img {
+            filter: brightness(0) invert(1);
+        }
+
+        .preview-icon-box .p-ico-ph {
+            font-size: 20px;
+            color: var(--accent);
+            transition: color var(--t-s);
+        }
+
+        .preview-feature.has-data .p-ico-ph {
+            color: #fff;
+        }
+
+        .preview-title {
+            font-family: var(--font-display);
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+            .preview-title.ph {
+                color: var(--text-muted);
+                font-weight: 400;
+                font-style: italic;
+                font-family: var(--font-body);
+                font-size: 12.5px;
+            }
+
+        .preview-id {
+            font-size: 10px;
+            color: var(--accent);
+            font-weight: 700;
+            background: var(--accent-lighter);
+            border: 1px solid #c7d2fe;
+            padding: 1px 7px;
+            border-radius: 99px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .preview-body {
+            padding: 12px 16px;
+        }
+
+        .preview-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+            .preview-desc.ph {
+                color: var(--text-muted);
+                font-style: italic;
+            }
+
+        /* Tips */
+        .tip-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .tip-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+            .tip-dot.blue {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+            .tip-dot.green {
+                background: #d1fae5;
+                color: #059669;
+            }
+
+            .tip-dot.amber {
+                background: #fef3c7;
+                color: #d97706;
+            }
+
+            .tip-dot.rose {
+                background: #fff1f2;
+                color: #e11d48;
+            }
+
+        .tip-text {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+            .tip-text strong {
+                color: var(--text-secondary);
+                font-weight: 700;
+            }
+
+        .required-note {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @@media (max-width: 900px) {
+            .create-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .info-panel {
+                position: static;
+            }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Yeni Özellik Ekle</h1>
+        <p class="page-desc">Ana sayfada gösterilecek yeni bir özellik tanımlayın.</p>
+    </div>
+    <a href="/Feature/Index" class="btn-cancel-link">
+        <i class="fa-solid fa-arrow-left"></i> Özellik Listesi
+    </a>
+</div>
+
+<div class="create-layout">
+
+    <!-- ════ Sol: Form ════ -->
+    <div>
+        <form method="post" id="featureForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="form-card-header-icon">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <div class="form-card-title">Özellik Bilgileri</div>
+                        <div class="form-card-subtitle">Aşağıdaki alanları eksiksiz doldurun.</div>
+                    </div>
+                </div>
+
+                <div class="form-card-body">
+
+                    <div class="section-label">
+                        <i class="fa-solid fa-circle-info" style="font-size:10px;color:var(--accent);"></i>
+                        Temel Bilgiler
+                    </div>
+
+                    <!-- Title -->
+                    <div class="f-group">
+                        <label class="f-label" for="Title">
+                            <i class="f-lbl-ico fa-solid fa-heading"></i>
+                            Başlık
+                            <span class="required-dot"></span>
+                        </label>
+                        <div class="f-wrap">
+                            <input asp-for="Title"
+                                   class="f-input"
+                                   placeholder="ör. 7/24 Yol Yardımı, Ücretsiz Teslimat…"
+                                   maxlength="100"
+                                   oninput="updatePreview(); countChars(this,'titleCounter',100)"
+                                   autocomplete="off" />
+                            <i class="f-ico fa-solid fa-heading"></i>
+                        </div>
+                        <div class="char-counter" id="titleCounter">0 / 100</div>
+                        <span asp-validation-for="Title" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Kısa ve dikkat çekici bir başlık yazın.
+                        </span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="f-group">
+                        <label class="f-label" for="Description">
+                            <i class="f-lbl-ico fa-solid fa-align-left"></i>
+                            Açıklama
+                            <span class="required-dot"></span>
+                        </label>
+                        <div class="f-wrap">
+                            <textarea asp-for="Description"
+                                      class="f-input"
+                                      rows="4"
+                                      placeholder="ör. Araçlarımız 7 gün 24 saat yol yardımı hizmetiyle desteklenmektedir."
+                                      maxlength="500"
+                                      oninput="updatePreview(); countChars(this,'descCounter',500)"></textarea>
+                            <i class="f-ico top fa-solid fa-align-left"></i>
+                        </div>
+                        <div class="char-counter" id="descCounter">0 / 500</div>
+                        <span asp-validation-for="Description" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Özelliği 1-2 cümleyle açıklayın, müşteri odaklı yazın.
+                        </span>
+                    </div>
+
+                    <hr class="form-divider" />
+
+                    <div class="section-label">
+                        <i class="fa-solid fa-image" style="font-size:10px;color:var(--accent);"></i>
+                        İkon Ayarları
+                    </div>
+
+                    <!-- IconUrl -->
+                    <div class="f-group">
+                        <label class="f-label" for="IconUrl">
+                            <i class="f-lbl-ico fa-solid fa-link"></i>
+                            İkon URL
+                        </label>
+                        <div class="icon-input-group">
+                            <div class="f-wrap">
+                                <input asp-for="IconUrl"
+                                       class="f-input"
+                                       placeholder="ör. /images/icons/road-help.svg"
+                                       oninput="updatePreview()"
+                                       autocomplete="off" />
+                                <i class="f-ico fa-solid fa-link"></i>
+                            </div>
+                            <button type="button" class="btn-preview-icon" onclick="previewIcon()">
+                                <i class="fa-solid fa-eye"></i> Test
+                            </button>
+                        </div>
+                        <span asp-validation-for="IconUrl" class="field-error">
+                            @*<i class="fa-solid fa-circle-exclamation"></i>*@
+                        </span>
+                        <span class="field-hint">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Görsel URL'si — SVG, PNG veya JPG desteklenir. Boş bırakabilirsiniz.
+                        </span>
+
+                        <!-- İkon test önizlemesi -->
+                        <div id="iconTestBox" style="display:none;margin-top:8px;padding:14px;background:var(--page-bg);border:1.5px solid var(--card-border);border-radius:var(--radius-sm);display:none;align-items:center;gap:12px;">
+                            <img id="iconTestImg" src="" alt="İkon" style="width:40px;height:40px;object-fit:contain;border-radius:6px;" onerror="iconLoadError()" />
+                            <div>
+                                <div style="font-size:12.5px;font-weight:600;color:var(--text-primary);">İkon yüklendi</div>
+                                <div id="iconTestMsg" style="font-size:11.5px;color:var(--text-muted);">URL geçerli görünüyor.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-card-footer">
+                    <a href="/Feature/FeatureList/" class="btn-cancel-link">
+                        <i class="fa-solid fa-xmark"></i> Vazgeç
+                    </a>
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> Özelliği Kaydet
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- ════ Sağ: Panel ════ -->
+    <div class="info-panel">
+
+        <!-- Canlı Önizleme -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-eye"></i>
+                <div class="info-card-title">Canlı Önizleme</div>
+            </div>
+            <div class="info-card-body">
+                <div class="preview-feature" id="previewCard">
+                    <div class="preview-top"></div>
+                    <div class="preview-header">
+                        <div class="preview-icon-box" id="previewIconBox">
+                            <img src="" alt="" id="previewImg" style="display:none;" />
+                            <span class="p-ico-ph" id="previewPh"><i class="fa-solid fa-star"></i></span>
+                        </div>
+                        <div>
+                            <div class="preview-id"># Yeni</div>
+                            <div class="preview-title ph" id="previewTitle">Başlık girilmedi…</div>
+                        </div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-desc ph" id="previewDesc">Açıklama girilmedi…</div>
+                    </div>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);text-align:center;margin:0;">
+                    Formu doldurdukça önizleme güncellenir.
+                </p>
+            </div>
+        </div>
+
+        <!-- İpuçları -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <i class="fa-solid fa-lightbulb"></i>
+                <div class="info-card-title">İpuçları</div>
+            </div>
+            <div class="info-card-body">
+                <div class="tip-item">
+                    <div class="tip-dot blue"><i class="fa-solid fa-heading"></i></div>
+                    <div class="tip-text"><strong>Başlık</strong> 3-5 kelimelik, dikkat çekici bir ifade olmalı.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot green"><i class="fa-solid fa-align-left"></i></div>
+                    <div class="tip-text"><strong>Açıklama</strong> müşteriye bu özelliğin ne anlam ifade ettiğini anlatmalı.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot amber"><i class="fa-solid fa-image"></i></div>
+                    <div class="tip-text"><strong>İkon URL</strong> opsiyoneldir. SVG formatı en iyi görünümü sağlar.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-dot rose"><i class="fa-solid fa-eye"></i></div>
+                    <div class="tip-text"><strong>Test</strong> butonuyla ikonun yüklenip yüklenmediğini kontrol edebilirsiniz.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="required-note">
+            <span class="required-dot"></span>
+            işaretli alanlar zorunludur.
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    function updatePreview() {
+            const title = document.getElementById('Title').value.trim();
+            const desc = document.getElementById('Description').value.trim();
+            const iconUrl = document.getElementById('IconUrl').value.trim();
+
+            const card = document.getElementById('previewCard');
+            const pTitle = document.getElementById('previewTitle');
+            const pDesc = document.getElementById('previewDesc');
+            const pImg = document.getElementById('previewImg');
+            const pPh = document.getElementById('previewPh');
+
+            const hasData = !!(title || desc || iconUrl);
+            card.classList.toggle('has-data', hasData);
+
+            // Başlık
+            if (title) {
+                pTitle.textContent = title;
+                pTitle.classList.remove('ph');
+            } else {
+                pTitle.textContent = 'Başlık girilmedi…';
+                pTitle.classList.add('ph');
+            }
+
+            // Açıklama
+            if (desc) {
+                pDesc.textContent = desc.length > 100 ? desc.substring(0, 97) + '…' : desc;
+                pDesc.classList.remove('ph');
+            } else {
+                pDesc.textContent = 'Açıklama girilmedi…';
+                pDesc.classList.add('ph');
+            }
+
+            // İkon
+            if (iconUrl) {
+                pImg.src = iconUrl;
+                pImg.style.display = 'block';
+                pPh.style.display = 'none';
+                pImg.onerror = () => { pImg.style.display = 'none'; pPh.style.display = 'block'; };
+            } else {
+                pImg.style.display = 'none';
+                pPh.style.display = 'block';
+            }
+        }
+
+        function previewIcon() {
+            const url = document.getElementById('IconUrl').value.trim();
+            const box = document.getElementById('iconTestBox');
+            const img = document.getElementById('iconTestImg');
+            const msg = document.getElementById('iconTestMsg');
+
+            if (!url) {
+                box.style.display = 'none'; return;
+            }
+
+            img.src = url;
+            box.style.display = 'flex';
+            msg.textContent = 'Yükleniyor…';
+            msg.style.color = 'var(--text-muted)';
+
+            img.onload = () => { msg.textContent = 'İkon başarıyla yüklendi ✓'; msg.style.color = 'var(--emerald)'; };
+            img.onerror = () => { msg.textContent = 'İkon yüklenemedi — URL kontrol edin.'; msg.style.color = 'var(--rose)'; };
+        }
+
+        function iconLoadError() {
+            const msg = document.getElementById('iconTestMsg');
+            if (msg) { msg.textContent = 'İkon yüklenemedi — URL kontrol edin.'; msg.style.color = 'var(--rose)'; }
+        }
+
+        function countChars(el, counterId, max) {
+            const len = el.value.length;
+            const c = document.getElementById(counterId);
+            c.textContent = len + ' / ' + max;
+            c.className = 'char-counter';
+            if (len > max * 0.80) c.classList.add('warn');
+            if (len > max * 0.95) c.classList.add('danger');
+        }
+
+        document.getElementById('featureForm').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor…';
+        });
+
+        document.querySelectorAll('.f-input').forEach(input => {
+            input.addEventListener('focus', () => {
+                const ico = input.closest('.f-group')?.querySelector('.f-lbl-ico');
+                if (ico) ico.style.color = 'var(--accent)';
+            });
+            input.addEventListener('blur', () => {
+                const ico = input.closest('.f-group')?.querySelector('.f-lbl-ico');
+                if (ico) ico.style.color = '';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePreview();
+            const titleEl = document.getElementById('Title');
+            const descEl = document.getElementById('Description');
+            if (titleEl?.value) countChars(titleEl, 'titleCounter', 100);
+            if (descEl?.value) countChars(descEl, 'descCounter', 500);
+        });</script>
+}
+
+

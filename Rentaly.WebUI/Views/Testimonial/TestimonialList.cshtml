@@ -1,0 +1,1022 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Testimonial>
+@{
+    ViewData["Title"] = "TestimonialList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Stats */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .s-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                opacity: 0;
+                transition: opacity var(--t);
+            }
+
+            .s-card.indigo::before {
+                background: var(--accent);
+            }
+
+            .s-card.emerald::before {
+                background: var(--emerald);
+            }
+
+            .s-card.amber::before {
+                background: var(--amber);
+            }
+
+            .s-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .s-card:hover::before {
+                    opacity: 1;
+                }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .s-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .s-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .sw {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+            .sw i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .s-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .s-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .s-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .view-toggle {
+            display: flex;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--page-bg);
+        }
+
+        .v-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--t-s);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+            .v-btn.active {
+                background: var(--accent);
+                color: #fff;
+            }
+
+            .v-btn:hover:not(.active) {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: 1.5px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            transition: all var(--t-s);
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--accent-lighter);
+                border-color: #c7d2fe;
+                color: var(--accent);
+            }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-add:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+                color: #fff;
+            }
+
+        /* ══ KART GÖRÜNÜMÜ ══ */
+        .testi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(320px,1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .testi-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--t);
+            position: relative;
+        }
+
+            .testi-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-3px);
+                border-color: #c7d2fe;
+            }
+
+        /* Büyük tırnak dekor */
+        .testi-card-body {
+            padding: 22px 22px 16px;
+            position: relative;
+            flex: 1;
+            background: linear-gradient(160deg, var(--accent-lighter) 0%, var(--card-bg) 40%);
+        }
+
+        .testi-quote-icon {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 56px;
+            line-height: 1;
+            color: rgba(79,70,229,0.10);
+            font-family: Georgia,serif;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .testi-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.3;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testi-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Yıldızlar */
+        .testi-stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 12px;
+        }
+
+            .testi-stars i {
+                font-size: 13px;
+                color: #f59e0b;
+            }
+
+        /* Alt kısım: Avatar + isim */
+        .testi-card-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--card-border);
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .testi-person {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .testi-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid var(--card-border);
+            transition: border-color var(--t-s);
+            background: var(--accent-lighter);
+        }
+
+        .testi-card:hover .testi-avatar {
+            border-color: #c7d2fe;
+        }
+
+        .testi-avatar-ph {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+            border: 2px solid rgba(79,70,229,0.2);
+        }
+
+        .testi-name {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .testi-id-badge {
+            display: inline-flex;
+            background: var(--accent-lighter);
+            color: var(--accent-text);
+            border: 1px solid #c7d2fe;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 99px;
+            margin-top: 2px;
+        }
+
+        .testi-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* ══ LİSTE GÖRÜNÜMÜ ══ */
+        .testi-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .testi-list-item {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .testi-list-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                background: linear-gradient(180deg,var(--accent) 0%,#818cf8 100%);
+            }
+
+            .testi-list-item:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateX(2px);
+                border-color: #c7d2fe;
+            }
+
+        .testi-list-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid var(--card-border);
+            transition: border-color var(--t-s);
+        }
+
+        .testi-list-item:hover .testi-list-avatar {
+            border-color: #c7d2fe;
+        }
+
+        .testi-list-avatar-ph {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .testi-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .testi-list-name {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .testi-list-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .testi-list-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 460px;
+        }
+
+        .testi-list-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* Butonlar */
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            padding: 7px 10px;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* Empty */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        /* Delete Modal */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+            background: #fafbff;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .testi-card {
+            animation: fadeUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+            .testi-card:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+
+            .testi-card:nth-child(2) {
+                animation-delay: 0.10s;
+            }
+
+            .testi-card:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+
+            .testi-card:nth-child(4) {
+                animation-delay: 0.20s;
+            }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width:640px) {
+            .testi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testi-list-desc {
+                display: none;
+            }
+        }
+    </style>
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Müşteri Yorumları</h1>
+        <p class="page-desc">Ana sayfada gösterilen müşteri yorumlarını yönetin.</p>
+    </div>
+    <a href="/Testimonial/CreateTestimonial" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Yeni Yorum
+    </a>
+</div>
+
+<!-- Stats -->
+<div class="stat-row">
+    <div class="s-card indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-comments"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Yorum</div>
+        </div>
+    </div>
+    <div class="s-card emerald">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-eye"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;" id="statVisible">@Model.Count()</div>
+            <div class="s-lbl">Gösterilen</div>
+        </div>
+    </div>
+    <div class="s-card amber">
+        <div class="s-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#d97706;">
+                @Model.Count(t => !string.IsNullOrEmpty(t.ImageUrl))
+            </div>
+            <div class="s-lbl">Fotoğraflı</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="sw">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="testiSearch"
+               placeholder="İsim, başlık veya yorum ara…"
+               oninput="filterItems()" />
+    </div>
+    <div class="view-toggle">
+        <button class="v-btn active" id="btnGrid" onclick="setView('grid')" title="Kart Görünümü">
+            <i class="fa-solid fa-grip"></i>
+        </button>
+        <button class="v-btn" id="btnList" onclick="setView('list')" title="Liste Görünümü">
+            <i class="fa-solid fa-list"></i>
+        </button>
+    </div>
+    <button class="btn-reset" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- KART GÖRÜNÜMÜ -->
+<div class="testi-grid" id="testiGrid">
+    @foreach (var t in Model)
+    {
+        var initials = string.IsNullOrEmpty(t.NameSurname) ? "?" :
+            string.Join("", t.NameSurname.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+
+        <div class="testi-card"
+             data-id="@t.TestimonialId"
+             data-name="@t.NameSurname?.ToLower()"
+             data-title="@t.Title?.ToLower()"
+             data-desc="@t.Description?.ToLower()">
+
+            <div class="testi-card-body">
+                <div class="testi-quote-icon">"</div>
+                <div class="testi-stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div class="testi-title">@t.Title</div>
+                <div class="testi-desc">@t.Description</div>
+            </div>
+
+            <div class="testi-card-footer">
+                <div class="testi-person">
+                    @if (!string.IsNullOrEmpty(t.ImageUrl))
+                    {
+                        <img class="testi-avatar" src="@t.ImageUrl" alt="@t.NameSurname"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                        <div class="testi-avatar-ph" style="display:none;">@initials</div>
+                    }
+                    else
+                    {
+                        <div class="testi-avatar-ph">@initials</div>
+                    }
+                    <div>
+                        <div class="testi-name">@t.NameSurname</div>
+                        <div class="testi-id-badge"># @t.TestimonialId</div>
+                    </div>
+                </div>
+                <div class="testi-actions">
+                    <a href="/Testimonial/UpdateTestimonial/@t.TestimonialId" class="tbl-btn tbl-btn-edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <button class="tbl-btn tbl-btn-delete"
+                            onclick="openDeleteModal(@t.TestimonialId, '@t.NameSurname')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- LİSTE GÖRÜNÜMÜ -->
+<div class="testi-list" id="testiList" style="display:none;">
+    @foreach (var t in Model)
+    {
+        var initials = string.IsNullOrEmpty(t.NameSurname) ? "?" :
+            string.Join("", t.NameSurname.Split(' ').Take(2).Select(w => w[0].ToString().ToUpper()));
+
+        <div class="testi-list-item"
+             data-id="@t.TestimonialId"
+             data-name="@t.NameSurname?.ToLower()"
+             data-title="@t.Title?.ToLower()"
+             data-desc="@t.Description?.ToLower()">
+
+            @if (!string.IsNullOrEmpty(t.ImageUrl))
+            {
+                <img class="testi-list-avatar" src="@t.ImageUrl" alt="@t.NameSurname"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="testi-list-avatar-ph" style="display:none;">@initials</div>
+            }
+            else
+            {
+                <div class="testi-list-avatar-ph">@initials</div>
+            }
+
+            <div class="testi-list-info">
+                <div class="testi-list-name">
+                    @t.NameSurname
+                    <span class="testi-id-badge">#@t.TestimonialId</span>
+                </div>
+                <div class="testi-list-title">@t.Title</div>
+                <div class="testi-list-desc">@t.Description</div>
+            </div>
+
+            <div class="testi-list-actions">
+                <a href="/Testimonial/UpdateTestimonial/@t.TestimonialId" class="tbl-btn tbl-btn-edit" style="padding:7px 11px;">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <button class="tbl-btn tbl-btn-delete"
+                        onclick="openDeleteModal(@t.TestimonialId, '@t.NameSurname')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-comments"></i></div>
+    <div class="empty-title">Yorum Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Arama kriterinizle eşleşen yorum yok.</p>
+    <button class="btn-add" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Yorumu Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:22px;">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteTestiName">bu yorumu</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">Bu işlem geri alınamaz. Ana sayfa etkilenebilir.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteTestiId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    let currentView = 'grid';
+
+    function setView(v) {
+        currentView = v;
+        document.getElementById('testiGrid').style.display = v === 'grid' ? 'grid' : 'none';
+        document.getElementById('testiList').style.display = v === 'list' ? 'flex' : 'none';
+        document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+        document.getElementById('btnList').classList.toggle('active', v === 'list');
+        filterItems();
+    }
+
+    function filterItems() {
+        const q = document.getElementById('testiSearch').value.toLowerCase().trim();
+        const gridItems = [...document.querySelectorAll('#testiGrid .testi-card')];
+        const listItems = [...document.querySelectorAll('#testiList .testi-list-item')];
+        const match = el => !q || (el.dataset.name||'').includes(q) || (el.dataset.title||'').includes(q) || (el.dataset.desc||'').includes(q) || el.dataset.id.includes(q);
+        let visible = 0;
+        gridItems.forEach(el => { const s = match(el); el.style.display = s ? '' : 'none'; if(s) visible++; });
+        listItems.forEach(el => { el.style.display = match(el) ? '' : 'none'; });
+        document.getElementById('statVisible').textContent = visible;
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('testiSearch').value = '';
+        filterItems();
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById('deleteTestiName').textContent = `"${name}"`;
+        document.getElementById('deleteTestiId').value = id;
+        document.getElementById('deleteForm').action = `/Testimonial/DeleteTestimonial/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success:'fa-check-circle', info:'fa-circle-info', danger:'fa-triangle-exclamation' };
+        const colors = { success:'#10b981', info:'var(--accent)', danger:'#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterItems();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+
+

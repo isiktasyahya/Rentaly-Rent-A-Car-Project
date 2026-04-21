@@ -1,0 +1,1026 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Feature>
+@{
+    ViewData["Title"] = "FeatureList";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* ══════════════════════════════════════════
+           FEATURE LIST — Indigo Daylight Theme
+        ══════════════════════════════════════════ */
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .page-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ── Stat Cards ── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .s-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .s-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                opacity: 0;
+                transition: opacity var(--t);
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            }
+
+            .s-card.indigo::before {
+                background: var(--accent);
+            }
+
+            .s-card.emerald::before {
+                background: var(--emerald);
+            }
+
+            .s-card.amber::before {
+                background: var(--amber);
+            }
+
+            .s-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: #c7d2fe;
+            }
+
+                .s-card:hover::before {
+                    opacity: 1;
+                }
+
+        .s-ico {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .s-val {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .s-lbl {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 22px;
+        }
+
+        .s-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+            .s-wrap i {
+                position: absolute;
+                left: 13px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 13px;
+                pointer-events: none;
+            }
+
+        .s-input {
+            width: 100%;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 9px 13px 9px 38px;
+            font-size: 13.5px;
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            background: var(--page-bg);
+            outline: none;
+            transition: all var(--t-s);
+        }
+
+            .s-input:focus {
+                border-color: var(--accent);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(79,70,229,0.10);
+            }
+
+            .s-input::placeholder {
+                color: var(--text-muted);
+            }
+
+        .view-toggle {
+            display: flex;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--page-bg);
+        }
+
+        .v-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--t-s);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+            .v-btn.active {
+                background: var(--accent);
+                color: #fff;
+            }
+
+            .v-btn:hover:not(.active) {
+                background: var(--accent-lighter);
+                color: var(--accent);
+            }
+
+        .btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            border: 1.5px solid var(--card-border);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            transition: all var(--t-s);
+            white-space: nowrap;
+        }
+
+            .btn-reset:hover {
+                background: var(--accent-lighter);
+                border-color: #c7d2fe;
+                color: var(--accent);
+            }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+            white-space: nowrap;
+        }
+
+            .btn-add:hover {
+                background: var(--accent-hover);
+                box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+                transform: translateY(-1px);
+            }
+
+        /* ══ KART GÖRÜNÜMÜ ══ */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .f-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all var(--t);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+            .f-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-3px);
+                border-color: #c7d2fe;
+            }
+
+        .f-card-top {
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent) 0%, #818cf8 100%);
+        }
+
+        .f-card-header {
+            padding: 20px 20px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .f-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: all var(--t-s);
+        }
+
+        .f-card:hover .f-icon-wrap {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .f-icon-wrap img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            filter: none;
+            transition: filter var(--t-s);
+        }
+
+        .f-icon-wrap .f-icon-placeholder {
+            font-size: 22px;
+            color: var(--accent);
+            transition: color var(--t-s);
+        }
+
+        .f-card:hover .f-icon-wrap img {
+            filter: brightness(0) invert(1);
+        }
+
+        .f-card:hover .f-icon-placeholder {
+            color: #fff;
+        }
+
+        .f-id-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 22px;
+            padding: 0 7px;
+            background: var(--accent-lighter);
+            color: var(--accent-text);
+            border: 1px solid #c7d2fe;
+            border-radius: 99px;
+            font-family: var(--font-display);
+            font-size: 10.5px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .f-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .f-card-body {
+            padding: 14px 20px;
+            flex: 1;
+        }
+
+        .f-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .f-icon-url {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 10px;
+            background: var(--page-bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--card-border);
+        }
+
+            .f-icon-url i {
+                font-size: 11px;
+                color: var(--text-muted);
+                flex-shrink: 0;
+            }
+
+            .f-icon-url span {
+                font-size: 11.5px;
+                color: var(--text-muted);
+                font-family: monospace;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+        .f-card-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--card-border);
+            background: #fafbff;
+            display: flex;
+            gap: 7px;
+        }
+
+        /* ══ LİSTE GÖRÜNÜMÜ ══ */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .f-list-item {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .f-list-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                background: linear-gradient(180deg, var(--accent) 0%, #818cf8 100%);
+            }
+
+            .f-list-item:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateX(2px);
+                border-color: #c7d2fe;
+            }
+
+        .f-list-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background: var(--accent-lighter);
+            border: 1.5px solid #c7d2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: all var(--t-s);
+        }
+
+        .f-list-item:hover .f-list-icon {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .f-list-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            transition: filter var(--t-s);
+        }
+
+        .f-list-item:hover .f-list-icon img {
+            filter: brightness(0) invert(1);
+        }
+
+        .f-list-icon .f-icon-placeholder {
+            font-size: 18px;
+            color: var(--accent);
+            transition: color var(--t-s);
+        }
+
+        .f-list-item:hover .f-list-icon .f-icon-placeholder {
+            color: #fff;
+        }
+
+        .f-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .f-list-title {
+            font-family: var(--font-display);
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .f-list-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 500px;
+        }
+
+        .f-list-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        /* ── Butonlar ── */
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            border: 1.5px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .tbl-btn-edit {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+            flex: 1;
+            justify-content: center;
+        }
+
+            .tbl-btn-edit:hover {
+                background: #f59e0b;
+                color: #fff;
+                border-color: #f59e0b;
+            }
+
+        .tbl-btn-delete {
+            background: #fff1f2;
+            color: #e11d48;
+            border-color: #fecdd3;
+            padding: 7px 10px;
+        }
+
+            .tbl-btn-delete:hover {
+                background: #f43f5e;
+                color: #fff;
+                border-color: #f43f5e;
+            }
+
+        /* ── Empty State ── */
+        .empty-state {
+            padding: 72px 20px;
+            text-align: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-lighter);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--accent);
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+            .empty-icon::after {
+                content: '';
+                position: absolute;
+                inset: -6px;
+                border-radius: 50%;
+                border: 2px dashed #c7d2fe;
+                animation: spin 12s linear infinite;
+            }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .empty-title {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        /* ── Delete Modal ── */
+        .modal-content {
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 40px rgba(30,27,75,0.14);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 20px;
+        }
+
+        .modal-body-pad {
+            padding: 22px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--card-border);
+            padding: 14px 20px;
+            gap: 8px;
+            background: #fafbff;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            background: var(--page-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
+            cursor: pointer;
+            transition: all var(--t-s);
+        }
+
+            .btn-cancel:hover {
+                background: var(--card-border);
+            }
+
+        .btn-confirm-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #f43f5e;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 9px 22px;
+            font-size: 13.5px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all var(--t-s);
+            box-shadow: 0 2px 8px rgba(244,63,94,0.25);
+        }
+
+            .btn-confirm-delete:hover {
+                background: #e11d48;
+                transform: translateY(-1px);
+            }
+
+        /* Toast */
+        .rc-toast {
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(30,27,75,0.14);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13.5px;
+            min-width: 260px;
+            animation: toastIn 0.3s ease both;
+        }
+
+        @@keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Grid animasyonlar */
+        .f-card, .f-list-item {
+            animation: fadeUp 0.3s cubic-bezier(0.4,0,0.2,1) both;
+        }
+
+            .f-card:nth-child(1), .f-list-item:nth-child(1) {
+                animation-delay: 0.05s;
+            }
+
+            .f-card:nth-child(2), .f-list-item:nth-child(2) {
+                animation-delay: 0.10s;
+            }
+
+            .f-card:nth-child(3), .f-list-item:nth-child(3) {
+                animation-delay: 0.15s;
+            }
+
+            .f-card:nth-child(4), .f-list-item:nth-child(4) {
+                animation-delay: 0.20s;
+            }
+
+            .f-card:nth-child(5), .f-list-item:nth-child(5) {
+                animation-delay: 0.25s;
+            }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 640px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .f-list-desc {
+                display: none;
+            }
+        }
+    </style>
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Öne Çıkan Özellikler</h1>
+        <p class="page-desc">Ana sayfada gösterilen hizmet özelliklerini yönetin.</p>
+    </div>
+    <a href="/Feature/CreateFeature/" class="btn-add">
+        <i class="fa-solid fa-plus"></i> Yeni Özellik
+    </a>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-row">
+    <div class="s-card indigo">
+        <div class="s-ico" style="background:var(--accent-lighter);color:var(--accent);">
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <div>
+            <div class="s-val">@Model.Count()</div>
+            <div class="s-lbl">Toplam Özellik</div>
+        </div>
+    </div>
+    <div class="s-card emerald">
+        <div class="s-ico" style="background:#d1fae5;color:#059669;">
+            <i class="fa-solid fa-eye"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#059669;" id="statVisible">@Model.Count()</div>
+            <div class="s-lbl">Gösterilen</div>
+        </div>
+    </div>
+    <div class="s-card amber">
+        <div class="s-ico" style="background:#fef3c7;color:#d97706;">
+            <i class="fa-solid fa-image"></i>
+        </div>
+        <div>
+            <div class="s-val" style="color:#d97706;">
+                @Model.Count(f => !string.IsNullOrEmpty(f.IconUrl))
+            </div>
+            <div class="s-lbl">İkon Tanımlı</div>
+        </div>
+    </div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="s-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" class="s-input" id="featureSearch"
+               placeholder="Özellik başlığı veya açıklama ara…"
+               oninput="filterFeatures()" />
+    </div>
+    <div class="view-toggle">
+        <button class="v-btn active" id="btnGrid" onclick="setView('grid')" title="Kart Görünümü">
+            <i class="fa-solid fa-grip"></i>
+        </button>
+        <button class="v-btn" id="btnList" onclick="setView('list')" title="Liste Görünümü">
+            <i class="fa-solid fa-list"></i>
+        </button>
+    </div>
+    <button class="btn-reset" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+    </button>
+</div>
+
+<!-- KART GÖRÜNÜMÜ -->
+<div class="feature-grid" id="featureGrid">
+    @foreach (var f in Model)
+    {
+        <div class="f-card"
+             data-id="@f.FeatureId"
+             data-title="@f.Title?.ToLower()"
+             data-desc="@f.Description?.ToLower()">
+
+            <div class="f-card-top"></div>
+
+            <div class="f-card-header">
+                <div class="f-icon-wrap">
+                    @if (!string.IsNullOrEmpty(f.IconUrl))
+                    {
+                        <img src="@f.IconUrl" alt="@f.Title" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                        <span class="f-icon-placeholder" style="display:none;"><i class="fa-solid fa-star"></i></span>
+                    }
+                    else
+                    {
+                        <span class="f-icon-placeholder"><i class="fa-solid fa-star"></i></span>
+                    }
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div class="f-id-badge"># @f.FeatureId</div>
+                    <div class="f-title">@f.Title</div>
+                </div>
+            </div>
+
+            <div class="f-card-body">
+                <div class="f-desc">@f.Description</div>
+                @if (!string.IsNullOrEmpty(f.IconUrl))
+                {
+                    <div class="f-icon-url">
+                        <i class="fa-solid fa-link"></i>
+                        <span title="@f.IconUrl">@f.IconUrl</span>
+                    </div>
+                }
+            </div>
+
+            <div class="f-card-footer">
+                <a href="/Feature/UpdateFeature/@f.FeatureId" class="tbl-btn tbl-btn-edit">
+                    <i class="fa-solid fa-pen-to-square"></i> Düzenle
+                </a>
+                <a href="/Feature/DeleteFeature/@f.FeatureId"
+                   class="tbl-btn tbl-btn-delete"
+                   onclick="return confirm('@f.Title kaydını silmek istediğinize emin misiniz?')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- LİSTE GÖRÜNÜMÜ -->
+<div class="feature-list" id="featureList" style="display:none;">
+    @foreach (var f in Model)
+    {
+        <div class="f-list-item"
+             data-id="@f.FeatureId"
+             data-title="@f.Title?.ToLower()"
+             data-desc="@f.Description?.ToLower()">
+
+            <div class="f-list-icon">
+                @if (!string.IsNullOrEmpty(f.IconUrl))
+                {
+                    <img src="@f.IconUrl" alt="@f.Title" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+                    <span class="f-icon-placeholder" style="display:none;"><i class="fa-solid fa-star"></i></span>
+                }
+                else
+                {
+                    <span class="f-icon-placeholder"><i class="fa-solid fa-star"></i></span>
+                }
+            </div>
+
+            <div class="f-list-info">
+                <div class="f-list-title">
+                    @f.Title
+                    <span class="f-id-badge">#@f.FeatureId</span>
+                </div>
+                <div class="f-list-desc">@f.Description</div>
+            </div>
+
+            <div class="f-list-actions">
+                <a href="/Feature/Edit/@f.FeatureId" class="tbl-btn tbl-btn-edit" style="flex:none;padding:7px 11px;">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <button class="tbl-btn tbl-btn-delete"
+                        onclick="openDeleteModal(@f.FeatureId, '@f.Title')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Empty State -->
+<div class="empty-state" id="emptyState" style="display:none;">
+    <div class="empty-icon"><i class="fa-solid fa-star"></i></div>
+    <div class="empty-title">Özellik Bulunamadı</div>
+    <p style="font-size:13.5px;color:var(--text-muted);margin-bottom:18px;">Arama kriterinizle eşleşen özellik yok.</p>
+    <button class="btn-add" onclick="clearSearch()">
+        <i class="fa-solid fa-rotate-left"></i> Aramayı Temizle
+    </button>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:36px;height:36px;background:#fff1f2;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:15px;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                    <h5 class="modal-title">Özelliği Sil</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body-pad">
+                <div style="display:flex;gap:14px;align-items:flex-start;">
+                    <div style="width:48px;height:48px;background:#fff1f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#f43f5e;font-size:20px;flex-shrink:0;">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p style="margin:0;font-size:14.5px;color:var(--text-primary);line-height:1.5;">
+                            <strong id="deleteFeatureTitle">bu özelliği</strong> silmek istediğinizden emin misiniz?
+                        </p>
+                        <p style="margin:6px 0 0;font-size:13px;color:var(--text-muted);">Bu işlem geri alınamaz. Ana sayfa etkilenebilir.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-xmark"></i> Vazgeç
+                </button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="deleteFeatureId" name="id" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fa-solid fa-trash-can"></i> Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+    let currentView = 'grid';
+
+    function setView(v) {
+        currentView = v;
+        document.getElementById('featureGrid').style.display = v === 'grid' ? 'grid' : 'none';
+        document.getElementById('featureList').style.display = v === 'list' ? 'flex' : 'none';
+        document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+        document.getElementById('btnList').classList.toggle('active', v === 'list');
+        filterFeatures();
+    }
+
+    function filterFeatures() {
+        const q = document.getElementById('featureSearch').value.toLowerCase().trim();
+        const gridItems = [...document.querySelectorAll('#featureGrid .f-card')];
+        const listItems = [...document.querySelectorAll('#featureList .f-list-item')];
+
+        const match = el => !q || (el.dataset.title||'').includes(q) || (el.dataset.desc||'').includes(q) || el.dataset.id.includes(q);
+
+        let visible = 0;
+        gridItems.forEach(el => { const s = match(el); el.style.display = s ? '' : 'none'; if(s) visible++; });
+        listItems.forEach(el => { el.style.display = match(el) ? '' : 'none'; });
+
+        document.getElementById('statVisible').textContent = visible;
+        document.getElementById('emptyState').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    function clearSearch() {
+        document.getElementById('featureSearch').value = '';
+        filterFeatures();
+    }
+
+    function openDeleteModal(id, title) {
+        document.getElementById('deleteFeatureTitle').textContent = `"${title}"`;
+        document.getElementById('deleteFeatureId').value = id;
+        document.getElementById('deleteForm').action = `/Feature/Delete/${id}`;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    function showToast(msg, type) {
+        const icons  = { success: 'fa-check-circle', info: 'fa-circle-info', danger: 'fa-triangle-exclamation' };
+        const colors = { success: '#10b981', info: 'var(--accent)', danger: '#f43f5e' };
+        const wrap   = document.createElement('div');
+        wrap.innerHTML = `<div class="rc-toast">
+            <i class="fa-solid ${icons[type]||'fa-circle-info'}" style="font-size:16px;color:${colors[type]||'var(--accent)'};flex-shrink:0;"></i>
+            <span style="flex:1;font-family:var(--font-body);">${msg}</span>
+            <button onclick="this.closest('.rc-toast').remove()" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;">✕</button>
+        </div>`;
+        document.getElementById('toastContainer').appendChild(wrap);
+        setTimeout(() => wrap.remove(), 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        filterFeatures();
+        @if (TempData["Success"] != null) { <text>showToast('@TempData["Success"]', 'success');</text> }
+        @if (TempData["Error"]   != null) { <text>showToast('@TempData["Error"]',   'danger');</text>  }
+    });
+    </script>
+}
+
+

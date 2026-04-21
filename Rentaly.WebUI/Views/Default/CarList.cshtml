@@ -1,0 +1,336 @@
+﻿@model X.PagedList.IPagedList<Rentaly.EntityLayer.Entities.Car>
+@using X.PagedList.Mvc.Core
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="zxx">
+
+@await Component.InvokeAsync("_DefaultHead");
+
+<body>
+    <div id="wrapper">
+
+        <!-- page preloader begin -->
+        <div id="de-preloader"></div>
+        <!-- page preloader close -->
+        <!-- header begin -->
+        @await Component.InvokeAsync("_DefaultHeader")
+
+        <!-- header close -->
+        <!-- content begin -->
+        <div class="no-bottom no-top zebra" id="content">
+            <div id="top"></div>
+
+            <!-- section begin -->
+            <section id="subheader" class="jarallax text-light">
+                <img src="/RentalyTema/images/background/2.jpg" class="jarallax-img" alt="">
+                <div class="center-y relative text-center">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h1>Araç Listesi</h1>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- section close -->
+
+            <section id="section-cars">
+                <div class="container">
+                    <div class="row">
+                        
+                        @await Component.InvokeAsync("_CarFilter")
+                        <div class="col-lg-9">
+
+                            <form method="get" asp-action="CarList" class="mb-4">
+                                <div style="display:flex; justify-content:flex-end;">
+
+                                    <div style="position:relative; width:390px;">
+
+                                        <span style="
+                position:absolute;
+                left:18px;
+                top:50%;
+                transform:translateY(-50%);
+                font-size:18px;
+                z-index:2;">
+                                            🚘
+                                        </span>
+
+                                        <select name="sort"
+                                                onchange="this.form.submit()"
+                                                class="form-select"
+                                                style="
+                    height:60px;
+                    padding-left:50px;
+                    padding-right:45px;
+                    border-radius:18px;
+                    border:2px solid #22c55e;
+                    font-weight:700;
+                    font-size:16px;
+                    box-shadow:0 8px 20px rgba(34,197,94,.10);">
+
+                                            <option value="" selected="@(string.IsNullOrEmpty(Context.Request.Query["sort"]))">📊 Araçları Sırala</option>
+
+                                            <option value="priceAsc" selected="@(Context.Request.Query["sort"]=="priceAsc")">
+                                                ⬆️ Fiyat (Ucuzdan Pahalıya)
+                                            </option>
+
+                                            <option value="priceDesc" selected="@(Context.Request.Query["sort"]=="priceDesc")">
+                                                ⬇️ Fiyat (Pahalıdan Ucuza)
+                                            </option>
+
+                                            <option value="yearDesc" selected="@(Context.Request.Query["sort"]=="yearDesc")">
+                                                🆕 En Yeni Modeller
+                                            </option>
+
+                                            <option value="kmAsc" selected="@(Context.Request.Query["sort"]=="kmAsc")">
+                                                🛣️ En Düşük KM
+                                            </option>
+
+                                            <option value="nameAsc" selected="@(Context.Request.Query["sort"]=="nameAsc")">
+                                                🔤 Marka (A-Z)
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+                            </form>
+
+                            @foreach (var item in Model)
+                            {
+
+                                <div class="row">
+
+                                    <div class="col-lg-12">
+                                        <div class="de-item-list mb30">
+
+                                            <div class="d-img">
+                                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/RentalyTema/images/cars/default.jpg" : item.ImageUrl)"
+                                                     class="img-fluid"
+                                                     alt="@(item.CarModel?.ModelName ?? "Araç")">
+                                            </div>
+
+                                            <div class="d-info">
+                                                <div class="d-text">
+
+                                                    <h4>
+                                                        @(item.Brand?.BrandName ?? "Marka")
+                                                        @(item.CarModel?.ModelName ?? "Model")
+                                                    </h4>
+
+                                                    <div class="d-atr-group">
+                                                        <ul class="d-atr">
+
+                                                            <li>
+                                                                <span>Koltuk:</span>
+                                                                @(item.SeatCount > 0 ? item.SeatCount : 0)
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Bagaj:</span>
+                                                                @(item.LuggageCount > 0 ? item.LuggageCount : 0)
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Kapı:</span>4
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Yakıt:</span>
+                                                                @(string.IsNullOrEmpty(item.FuelType) ? "-" : item.FuelType)
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Yıl:</span>
+                                                                @(item.Year > 0 ? item.Year : 0)
+                                                            </li>
+
+                                                            <li>
+                                                                <span>KM:</span>
+                                                                @(item.Kilometer > 0 ? item.Kilometer.ToString("N0") : "0")
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Şube:</span>
+                                                                @(item.Branch?.BranchName ?? "-")
+                                                            </li>
+
+                                                            <li>
+                                                                <span>Tip:</span>
+                                                                @(item.Category?.CategoryName ?? "-")
+                                                            </li>
+
+                                                        </ul>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="d-price">
+                                                Günlük
+                                                <span>
+                                                    @(item.DailyPrice > 0 ? item.DailyPrice.ToString("N0") : "0") ₺
+                                                </span>
+
+                                                <a asp-controller="Default"
+                                                   asp-action="CarDetail"
+                                                   asp-route-id="@item.CarId"
+                                                   class="btn-main">
+                                                    Detayını Gör
+                                                </a>
+                                            </div>
+
+                                            <div class="clearfix"></div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-lg-12">
+
+                            <div class="custom-pagination-wrapper">
+
+                                @Html.PagedListPager(
+                                    Model,
+                                    page => Url.Action("CarList", new { page }),
+                                    new PagedListRenderOptions
+                                    {
+                                        LiElementClasses = new[] { "page-item" },
+                                        PageClasses = new[] { "page-link" },
+                                        UlElementClasses = new[] { "pagination custom-pagination justify-content-center" },
+
+                                        DisplayLinkToFirstPage = PagedListDisplayMode.Never,
+                                        DisplayLinkToLastPage = PagedListDisplayMode.Never,
+                                        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                                        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+
+                                        MaximumPageNumbersToDisplay = 5
+                                    })
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+        </div>
+        <!-- content close -->
+
+        <a href="#" id="back-to-top"></a>
+
+        <!-- footer begin -->
+        @await Component.InvokeAsync("_DefaultFooter")
+
+        <!-- footer close -->
+
+    </div>
+
+
+    <!-- Javascript Files
+    ================================================== -->
+    <script src="/RentalyTema/js/plugins.js"></script>
+    <script src="/RentalyTema/js/designesia.js"></script>
+    <style>
+        .custom-pagination-wrapper {
+            margin-top: 40px;
+        }
+
+        .custom-pagination {
+            gap: 12px;
+        }
+
+            .custom-pagination li {
+                list-style: none;
+            }
+
+                .custom-pagination li a,
+                .custom-pagination li span {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 14px !important;
+                    border: none !important;
+                    background: #f5f7fa;
+                    color: #111827 !important;
+                    font-weight: 700;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all .25s ease;
+                    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+                }
+
+                    .custom-pagination li a:hover {
+                        background: #1ecb15;
+                        color: #fff !important;
+                        transform: translateY(-3px);
+                    }
+
+            .custom-pagination .active span,
+            .custom-pagination .active a {
+                background: #1ecb15 !important;
+                color: #fff !important;
+                transform: scale(1.08);
+                box-shadow: 0 12px 25px rgba(30,203,21,.35);
+            }
+
+            .custom-pagination .disabled span {
+                opacity: .40;
+            }
+
+            .custom-pagination li:first-child a,
+            .custom-pagination li:last-child a {
+                width: 58px;
+                font-size: 18px;
+            }
+
+        @@media(max-width:768px) {
+            .custom-pagination li a,
+            .custom-pagination li span {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+        }
+
+        .car-sort-box {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .custom-sort {
+            width: 320px;
+            height: 52px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            padding: 0 18px;
+            font-weight: 600;
+            box-shadow: 0 8px 18px rgba(0,0,0,.06);
+        }
+
+            .custom-sort:focus {
+                border-color: #1ecb15;
+                box-shadow: 0 0 0 4px rgba(30,203,21,.12);
+            }
+
+    </style>
+
+</body>
+
+</html>
